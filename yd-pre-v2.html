@@ -1,0 +1,2418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1.0" name="viewport"/>
+<title>Project Realization Engine | YOGIJI DIGI</title>
+<link href="yd-favicon.png" rel="icon"/>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Open+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{--yd-primary:#2a5071;--yd-red:#ad283f;--yd-dark:#1a2f42;--yd-accent:#e8f0f7;--yd-border:#dce4ec;--cell-h:42px}
+*{box-sizing:border-box}
+body{background:url('ydbg.jpeg') no-repeat center center fixed;background-size:cover;font-family:'Open Sans',sans-serif;color:#333;margin:0;min-height:100vh}
+.header{background:#fff;box-shadow:0 2px 20px rgba(1,41,112,.12);padding:10px 20px;position:sticky;top:0;z-index:1050;display:flex;align-items:center;gap:12px}
+.header .logo img{max-height:38px}
+.header-actions{display:flex;gap:8px;align-items:center;margin-left:auto}
+.main{padding:20px;min-height:calc(100vh - 120px)}
+/* DASHBOARD */
+.dashboard-header{background:rgba(255,255,255,.96);border-radius:14px;padding:20px 24px;margin-bottom:18px;backdrop-filter:blur(6px);box-shadow:0 4px 24px rgba(42,80,113,.1)}
+.project-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:16px}
+.project-register{display:flex;flex-direction:column;gap:14px}
+.project-controls{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap}
+.project-summary{display:flex;gap:10px;flex-wrap:wrap}
+.summary-pill{background:rgba(255,255,255,.92);border:1.5px solid var(--yd-border);border-radius:12px;padding:10px 14px;min-width:120px;box-shadow:0 2px 14px rgba(42,80,113,.08)}
+.summary-pill b{display:block;font-family:'Nunito',sans-serif;font-size:1rem;color:var(--yd-primary)}
+.summary-pill span{font-size:.74rem;color:#66727f;text-transform:uppercase;letter-spacing:.3px}
+.project-filters{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.project-filters .form-control,.project-filters .form-select{min-width:190px;border:1.5px solid var(--yd-border);box-shadow:none}
+.project-list-wrap{background:rgba(255,255,255,.97);border-radius:14px;border:1.5px solid var(--yd-border);overflow:auto;box-shadow:0 4px 24px rgba(42,80,113,.1)}
+.project-list{border-collapse:separate;border-spacing:0;min-width:1560px;width:100%}
+.project-list th{position:sticky;top:0;z-index:5;background:var(--yd-primary);color:#fff;padding:11px 10px;font-family:'Nunito',sans-serif;font-size:.8rem;font-weight:800;text-align:left;white-space:nowrap}
+.project-list td{padding:12px 10px;border-bottom:1px solid #e7edf4;vertical-align:top;font-size:.82rem;background:#fff}
+.project-list tbody tr:hover td{background:#f8fbfd}
+.project-id-badge{display:inline-flex;align-items:center;justify-content:center;background:#edf2f7;color:var(--yd-primary);border-radius:999px;padding:4px 10px;font-family:'JetBrains Mono',monospace;font-size:.74rem;font-weight:700}
+.project-index-chip{display:inline-flex;align-items:center;background:#f5f7fa;color:#66727f;border-radius:999px;padding:3px 9px;font-size:.7rem;font-weight:700;margin-top:6px}
+.project-title-text{font-weight:700;color:var(--yd-dark);line-height:1.4}
+.project-subtext{font-size:.74rem;color:#7a8694;margin-top:4px}
+.meta-input,.meta-select{width:100%;border:1.5px solid transparent;border-radius:8px;padding:7px 8px;background:transparent;color:#344054;font-size:.82rem}
+.meta-input:disabled,.meta-select:disabled{opacity:1;cursor:default;-webkit-text-fill-color:#344054}
+.meta-input:not(:disabled),.meta-select:not(:disabled){background:#fff9e8;border-color:#e8d6a3}
+.meta-input:focus,.meta-select:focus{outline:none;border-color:var(--yd-primary);box-shadow:0 0 0 2px rgba(42,80,113,.12)}
+.meta-stack{display:flex;flex-direction:column;gap:6px}
+.label-stack{display:flex;gap:6px;flex-wrap:wrap}
+.label-chip{display:inline-flex;align-items:center;background:#edf3ff;color:#315c88;border-radius:999px;padding:4px 10px;font-size:.72rem;font-weight:700}
+.state-pill,.plan-pill{display:inline-flex;align-items:center;border-radius:999px;padding:5px 10px;font-size:.72rem;font-weight:800;white-space:nowrap}
+.state-in-process{background:#e9f8ef;color:#198754}
+.state-on-hold{background:#fff3cd;color:#946200}
+.state-completed{background:#e6f4ea;color:#0f8f46}
+.state-planned{background:#edf3ff;color:#315c88}
+.plan-in{background:#edf6ff;color:#1d4ed8}
+.plan-out{background:#fde2e4;color:#9f1239}
+.plan-note{font-size:.72rem;color:#7a8694;margin-top:6px;line-height:1.35}
+.action-stack{display:flex;gap:6px;flex-wrap:wrap}
+.table-btn{padding:6px 12px;font-size:.76rem;border-radius:8px}
+.empty-table{padding:36px 18px;text-align:center;color:#98a2ad;font-weight:700}
+.workspace-head-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-left:auto}
+.icon-action{width:36px;height:36px;padding:0;display:inline-flex;align-items:center;justify-content:center}
+.sl-summary-panel{background:linear-gradient(180deg,#fbfdff,#f4f8fb);border-bottom:1.5px solid var(--yd-border);padding:16px 20px;display:none}
+.sl-summary-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;flex-wrap:wrap}
+.sl-summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:14px}
+.sl-mini-card{background:#fff;border:1.5px solid var(--yd-border);border-radius:12px;padding:12px 14px;box-shadow:0 2px 12px rgba(42,80,113,.06)}
+.sl-mini-card h6{margin:0 0 8px 0;font-family:'Nunito',sans-serif;font-weight:800;color:var(--yd-primary);font-size:.84rem}
+.sl-mini-card p{margin:0;font-size:.78rem;line-height:1.45;color:#5d6976}
+.sl-chip-list{display:flex;flex-wrap:wrap;gap:6px}
+.sl-chip{display:inline-flex;align-items:center;background:#edf3ff;color:#315c88;border-radius:999px;padding:4px 10px;font-size:.72rem;font-weight:700}
+.sl-kpi-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.sl-kpi{background:#f8fbfd;border-radius:10px;padding:8px 10px}
+.sl-kpi b{display:block;font-family:'Nunito',sans-serif;color:var(--yd-primary);font-size:.92rem}
+.sl-kpi span{font-size:.7rem;color:#6b7785;text-transform:uppercase;letter-spacing:.2px}
+.task-meta-note{display:block;font-size:.68rem;color:#7b8794;margin-top:4px}
+.project-card{background:rgba(255,255,255,.97);border-radius:12px;border:1.5px solid var(--yd-border);padding:18px 20px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.project-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--yd-primary)}
+.project-card:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(42,80,113,.15);border-color:var(--yd-primary)}
+.project-card.active-card::before{background:#198754}
+.project-card .proj-code{font-family:'Nunito',sans-serif;font-weight:800;font-size:1rem;color:var(--yd-primary)}
+.proj-progress{height:6px;background:#e9ecef;border-radius:10px;margin-top:10px}
+.proj-progress-fill{height:100%;border-radius:10px;background:linear-gradient(90deg,var(--yd-primary),var(--yd-red));transition:width .4s}
+/* WORKSPACE */
+.workspace{background:rgba(255,255,255,.98);border-radius:14px;box-shadow:0 4px 28px rgba(42,80,113,.1);overflow:hidden}
+.workspace-tabs{display:flex;border-bottom:2px solid var(--yd-border);background:#fafbfc}
+.ws-tab{padding:12px 24px;font-weight:700;font-size:.88rem;cursor:pointer;border-bottom:3px solid transparent;color:#777;transition:all .2s}
+.ws-tab.active{color:var(--yd-primary);border-bottom-color:var(--yd-primary);background:#fff}
+.ws-tab:hover:not(.active){color:var(--yd-dark);background:#f0f3f6}
+/* PERT */
+#pertView{padding:20px;overflow-x:auto}
+.pert-toolbar{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+.pert-table-wrap{overflow:auto;border:1.5px solid var(--yd-border);border-radius:10px}
+.pert-table{border-collapse:collapse;min-width:600px;width:100%}
+.pert-table th,.pert-table td{border:1px solid #d0dae4;padding:0;min-width:150px;height:var(--cell-h);vertical-align:middle;position:relative}
+.pert-table th{background:var(--yd-primary);color:#fff;font-family:'Nunito',sans-serif;font-weight:700;font-size:.82rem;text-align:center;height:44px}
+.pert-table th.cat-header{background:var(--yd-dark)}
+.pert-table td.cat-cell{background:#edf2f7;font-weight:700;font-size:.75rem;color:var(--yd-dark);text-align:center;padding:6px 4px;cursor:pointer;writing-mode:vertical-rl;transform:rotate(180deg)}
+.pert-table td.assembly-label{background:#f8fafc;font-size:.8rem;font-weight:600;color:var(--yd-primary);padding:4px 8px;cursor:pointer;white-space:nowrap;min-width:180px}
+.pert-table td.assembly-label:hover{background:var(--yd-accent)}
+.pert-bar-cell{background:#fff;cursor:pointer;transition:background .15s;min-width:150px}
+.pert-bar-cell:hover{background:#edf2f7}
+.pert-bar{margin:5px 6px;border-radius:5px;height:30px;display:flex;align-items:center;padding:0 8px;font-size:.72rem;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
+.ph-0{background:linear-gradient(90deg,#2a5071,#3a6a91)}
+.ph-1{background:linear-gradient(90deg,#ad283f,#c73d55)}
+.ph-2{background:linear-gradient(90deg,#198754,#22a96a)}
+.ph-3{background:linear-gradient(90deg,#f77f00,#f9a03a)}
+.ph-4{background:linear-gradient(90deg,#6f42c1,#9b68e0)}
+.ph-5{background:linear-gradient(90deg,#0dcaf0,#38bfde);color:#000}
+.ph-6{background:linear-gradient(90deg,#ffc107,#f5a623);color:#000}
+.ph-7{background:linear-gradient(90deg,#6c757d,#888)}
+.ph-8{background:linear-gradient(90deg,#20c997,#17a583)}
+.add-col-btn,.add-row-btn{background:#edf2f7;border:1.5px dashed #adb5bd;border-radius:6px;cursor:pointer;color:#aaa;font-size:.75rem;font-weight:700;transition:all .2s;white-space:nowrap}
+.add-col-btn:hover,.add-row-btn:hover{background:var(--yd-accent);border-color:var(--yd-primary);color:var(--yd-primary)}
+.phase-name-input{background:transparent;border:none;color:#fff;font-family:'Nunito',sans-serif;font-weight:700;font-size:.82rem;width:100%;text-align:center;cursor:pointer}
+.phase-name-input:focus{outline:1px solid rgba(255,255,255,.5);border-radius:3px;cursor:text}
+/* TABULAR */
+#tabularView{padding:20px}
+.task-table-wrap{overflow:auto;border:1.5px solid var(--yd-border);border-radius:10px}
+.task-table{border-collapse:collapse;width:100%}
+.task-table th{background:var(--yd-primary);color:#fff;font-family:'Nunito',sans-serif;font-weight:700;font-size:.82rem;padding:10px 12px;text-align:left;white-space:nowrap}
+.task-table td{padding:8px 12px;border-bottom:1px solid #edf0f3;font-size:.83rem;vertical-align:middle}
+.task-table tr:hover>td{background:#f5f8fb}
+.task-row-parent{font-weight:700;background:#f8fafc}
+.task-row-sub td:first-child{padding-left:32px;color:#555;font-weight:400}
+.phase-tag{font-size:.7rem;padding:2px 7px;border-radius:10px;font-weight:700;color:#fff;display:inline-block}
+.date-badge{font-family:'JetBrains Mono',monospace;font-size:.78rem;background:#edf2f7;padding:2px 7px;border-radius:5px;color:#444}
+.sn-badge{font-size:.72rem;color:#aaa;font-family:'JetBrains Mono',monospace;margin-right:6px;min-width:28px;display:inline-block}
+/* COMP SHEET */
+#compView{padding:20px}
+.comp-toolbar{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
+.comp-sheet-wrap{overflow:auto;border:1.5px solid var(--yd-border);border-radius:10px;max-height:70vh}
+.comp-sheet{border-collapse:collapse;min-width:1100px;width:100%}
+.comp-sheet th{background:var(--yd-primary);color:#fff;font-family:'Nunito',sans-serif;font-weight:700;font-size:.78rem;padding:9px 8px;white-space:nowrap;text-align:center;position:sticky;top:0;z-index:10}
+.comp-sheet th.pm-col{background:var(--yd-dark)}
+.comp-sheet th.row-num{background:#0f1e2b;width:36px;min-width:36px}
+.comp-sheet td{border:1px solid #d8e0e8;padding:0;height:34px;min-width:90px;position:relative;vertical-align:middle}
+.comp-sheet td.row-num-cell{background:#f0f4f8;text-align:center;font-size:.72rem;color:#888;font-family:'JetBrains Mono',monospace;min-width:36px;width:36px;user-select:none}
+.comp-sheet td input,.comp-sheet td select{border:none;outline:none;width:100%;height:100%;padding:3px 7px;font-size:.82rem;background:transparent;font-family:'Open Sans',sans-serif}
+.comp-sheet td input:focus,.comp-sheet td select:focus{background:#fff9e8;outline:2px solid var(--yd-primary);outline-offset:-2px}
+.comp-sheet td.pm-cell input{color:#2a5071;font-weight:600}
+.comp-sheet td .pdf-chip{display:inline-flex;align-items:center;gap:4px;background:#ffe0e4;color:var(--yd-red);border-radius:4px;font-size:.72rem;padding:2px 6px;cursor:pointer;font-weight:600;margin:2px}
+.comp-sheet td .pdf-chip:hover{background:var(--yd-red);color:#fff}
+.comp-sheet tr:nth-child(even) td:not(.selected){background:#fafbfc}
+.comp-sheet td.selected{background:#dbeeff!important;outline:2px solid var(--yd-primary)}
+.status-sel{border:none;background:transparent;font-size:.78rem;font-weight:700;width:100%;padding:4px 6px;cursor:pointer}
+/* PASTE ZONE */
+.paste-hint{font-size:.75rem;color:#888;padding:6px 10px;background:#f8fafc;border-top:1px solid var(--yd-border);border-radius:0 0 8px 8px}
+/* MODALS */
+.modal-header{border-bottom:2px solid var(--yd-primary)}
+.modal-title{color:var(--yd-primary);font-family:'Nunito',sans-serif;font-weight:800}
+/* CTX MENU */
+#ctxMenu{position:fixed;z-index:9999;background:#fff;border:1.5px solid var(--yd-border);border-radius:8px;box-shadow:0 8px 28px rgba(0,0,0,.15);min-width:180px;overflow:hidden;display:none}
+#ctxMenu .ctx-item{padding:9px 16px;font-size:.83rem;cursor:pointer;display:flex;align-items:center;gap:8px;transition:background .15s}
+#ctxMenu .ctx-item:hover{background:var(--yd-accent);color:var(--yd-primary)}
+#ctxMenu .ctx-divider{height:1px;background:var(--yd-border)}
+/* FOOTER */
+.footer{background:#f1f1f1;padding:24px 0 16px;font-size:14px;margin-top:20px}
+.footer h4{font-size:15px;font-weight:bold;color:var(--yd-primary);padding-bottom:10px}
+.footer ul{list-style:none;padding:0;margin:0}
+.footer ul li{padding:5px 0}
+.footer ul li a{color:#6c757d;text-decoration:none;transition:.3s;font-size:.82rem}
+.copyright{padding-top:18px;border-top:1px solid #d1d7dc;color:var(--yd-primary);text-align:center;font-size:.82rem}
+/* BTNS */
+.btn-yd{background:var(--yd-primary);color:#fff;border:none;border-radius:7px;padding:7px 16px;font-size:.82rem;font-weight:700;cursor:pointer;transition:background .2s}
+.btn-yd:hover{background:var(--yd-dark)}
+.btn-yd-red{background:var(--yd-red);color:#fff;border:none;border-radius:7px;padding:7px 16px;font-size:.82rem;font-weight:700;cursor:pointer}
+.btn-outline-yd{background:#fff;color:var(--yd-primary);border:1.5px solid var(--yd-primary);border-radius:7px;padding:6px 14px;font-size:.82rem;font-weight:700;cursor:pointer;transition:all .2s}
+.btn-outline-yd:hover{background:var(--yd-primary);color:#fff}
+.btn-sm-icon{background:#edf2f7;border:none;border-radius:6px;padding:5px 9px;cursor:pointer;font-size:.78rem;transition:all .2s}
+.btn-sm-icon:hover{background:var(--yd-accent);color:var(--yd-primary)}
+.back-btn{cursor:pointer;color:var(--yd-primary);font-weight:700;display:inline-flex;align-items:center;gap:6px;font-size:.85rem}
+.back-btn:hover{text-decoration:underline}
+.proj-end-badge{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(90deg,var(--yd-primary),var(--yd-red));color:#fff;border-radius:8px;padding:5px 14px;font-family:'Nunito',sans-serif;font-weight:800;font-size:.88rem}
+.asm-chip{padding:5px 12px;border-radius:20px;font-size:.78rem;font-weight:700;cursor:pointer;border:1.5px solid var(--yd-border);background:#fff;transition:all .2s;color:#555}
+.asm-chip.active{background:var(--yd-primary);color:#fff;border-color:var(--yd-primary)}
+.cr-badge{font-size:.68rem;background:#fff3cd;color:#856404;border-radius:4px;padding:1px 5px;font-weight:700}
+.import-drop{border:2px dashed var(--yd-primary);border-radius:10px;padding:20px;text-align:center;cursor:pointer;transition:all .2s;background:rgba(42,80,113,.03)}
+.import-drop:hover,.import-drop.dragover{background:rgba(42,80,113,.08);border-color:var(--yd-red)}
+.days-input-group{display:flex;align-items:center;gap:6px}
+.days-input-group input{width:70px;text-align:center;border:1.5px solid var(--yd-border);border-radius:6px;padding:4px 8px;font-size:.85rem}
+@media (max-width:991px){
+  .project-controls{flex-direction:column}
+  .project-filters{width:100%}
+  .project-filters .form-control,.project-filters .form-select{min-width:0;flex:1 1 180px}
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <a href="#" onclick="showDashboard()" class="logo" style="text-decoration:none">
+    <img src="YDLOGO.png" alt="YD" onerror="this.src='https://via.placeholder.com/150x38?text=YOGIJI+DIGI'">
+  </a>
+  <span style="font-family:'Nunito',sans-serif;font-weight:900;color:var(--yd-primary);font-size:.95rem;letter-spacing:.5px">Project Realization Engine</span>
+  <div class="header-actions">
+    <button class="btn btn-sm" style="background:#fde2e4;color:#9f1239;font-weight:700">Report</button>
+    <button class="btn btn-sm" style="background:#fff4cc;color:#92400e;font-weight:700">Meeting</button>
+    <a href="#" style="color:var(--yd-primary);font-size:1.1rem;position:relative;text-decoration:none">
+      <i class="fa-solid fa-bell"></i>
+      <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size:9px">3</span>
+    </a>
+    <div class="dropdown">
+      <button class="btn btn-sm dropdown-toggle" style="background:var(--yd-accent);color:var(--yd-primary);font-weight:700;border:none" data-bs-toggle="dropdown">
+        <i class="fa fa-circle-user me-1"></i><span id="roleLbl">PM (Aditya)</span>
+      </button>
+      <ul class="dropdown-menu dropdown-menu-end shadow">
+        <li><h6 class="dropdown-header">Switch Role</h6></li>
+        <li><button class="dropdown-item" onclick="setRole('PM','PM (Aditya)')">PM (Aditya)</button></li>
+        <li><button class="dropdown-item" onclick="setRole('DESIGN','Design (Amit)')">Design (Amit)</button></li>
+        <li><button class="dropdown-item" onclick="setRole('VP','COO/VP (Varun)')">COO/VP (Varun)</button></li>
+        <li><button class="dropdown-item" onclick="setRole('PLANNING','Planning Team')">Planning Team</button></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<div class="main">
+  <!-- DASHBOARD -->
+  <div id="dashView">
+    <div class="dashboard-header">
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+        <div>
+          <h4 style="font-family:'Nunito',sans-serif;font-weight:900;color:var(--yd-red);margin:0">AssemFlow</h4>
+          <p class="text-muted small mb-0">Post Kickoff — Planning through Dispatch</p>
+        </div>
+        <div class="d-flex gap-2 flex-wrap">
+          <label class="btn-outline-yd" style="cursor:pointer;margin:0">
+            <i class="fa fa-file-import me-1"></i>Import .sl
+            <input type="file" id="slInput" accept=".sl" style="display:none" onchange="importSL(event)">
+          </label>
+          <button class="btn-outline-yd" onclick="openNewProjectModal()"><i class="fa fa-plus me-1"></i>New Project</button>
+          <button class="btn-yd" onclick="exportDashPDF()"><i class="fa fa-file-pdf me-1"></i>Export</button>
+        </div>
+      </div>
+    </div>
+    <div class="project-register">
+      <div class="project-controls">
+        <div class="project-summary" id="projectSummary"></div>
+        <div class="project-filters">
+          <input type="search" id="projectSearch" class="form-control" placeholder="Search project, number, manager, label" oninput="renderDashboard()">
+          <select id="projectStateFilter" class="form-select" onchange="renderDashboard()">
+            <option value="">All States</option>
+            <option>In Process</option>
+            <option>On Hold</option>
+            <option>Planned</option>
+            <option>Completed</option>
+          </select>
+          <select id="projectPlanFilter" class="form-select" onchange="renderDashboard()">
+            <option value="">All Plan Status</option>
+            <option>Checked In</option>
+            <option>Checked Out</option>
+          </select>
+        </div>
+      </div>
+      <div class="project-list-wrap" id="projectGrid"></div>
+    </div>
+  </div>
+
+  <!-- WORKSPACE -->
+  <div id="workspaceView" style="display:none">
+    <div style="margin-bottom:14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      <span class="back-btn" onclick="showDashboard()"><i class="fa fa-arrow-left"></i> All Projects</span>
+      <span style="color:#aaa">/</span>
+      <span style="font-family:'Nunito',sans-serif;font-weight:800;color:var(--yd-primary);font-size:1rem" id="wsTitle">Project</span>
+      <div class="workspace-head-actions" id="workspaceHeadActions"></div>
+      <span class="proj-end-badge" id="wsEndDate"><i class="fa fa-flag-checkered me-1"></i>—</span>
+    </div>
+    <div class="workspace">
+      <div class="sl-summary-panel" id="slSummaryPanel"></div>
+      <div class="workspace-tabs">
+        <div class="ws-tab active" onclick="switchTab('pert',this)"><i class="fa fa-diagram-project me-1"></i>PERT Chart</div>
+        <div class="ws-tab" onclick="switchTab('tabular',this)"><i class="fa fa-table-list me-1"></i>Tabular View</div>
+        <div class="ws-tab" onclick="switchTab('comp',this)"><i class="fa fa-microchip me-1"></i>Component Register</div>
+      </div>
+      <div>
+        <!-- PERT -->
+        <div id="pertView">
+          <div class="pert-toolbar">
+            <button class="btn-yd" onclick="addCategory()"><i class="fa fa-layer-group me-1"></i>Add Category</button>
+            <button class="btn-outline-yd" onclick="addPhase()"><i class="fa fa-columns me-1"></i>Add Phase</button>
+            <button class="btn-sm-icon" title="Refresh" onclick="renderPert()"><i class="fa fa-rotate-right"></i></button>
+            <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
+              <span style="font-size:.78rem;color:#888"><i class="fa fa-info-circle me-1"></i>Click cell to set days or dates</span>
+              <button class="btn-outline-yd" onclick="switchTab('tabular',document.querySelectorAll('.ws-tab')[1])">Tabular <i class="fa fa-arrow-right ms-1"></i></button>
+            </div>
+          </div>
+          <!-- PASTE AREA FOR EXCEL -->
+          <div style="margin-bottom:12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+            <span style="font-size:.78rem;font-weight:700;color:var(--yd-primary)"><i class="fa fa-paste me-1"></i>Paste from Excel:</span>
+            <textarea id="pertPasteArea" rows="3" placeholder="Paste Excel rows here (Assembly&#9;Engg Days&#9;O&M Days&#9;Assembly Days&#9;Dispatch Days)" style="flex:1;min-width:250px;font-size:.78rem;border:1.5px solid var(--yd-border);border-radius:6px;padding:6px 8px;font-family:'JetBrains Mono',monospace;resize:vertical"></textarea>
+            <div class="d-flex flex-column gap-2">
+              <select id="pertPasteCat" class="form-select form-select-sm" style="min-width:150px"></select>
+              <button class="btn-yd" onclick="parsePertPaste()" style="padding:5px 14px;font-size:.78rem"><i class="fa fa-check me-1"></i>Import Rows</button>
+            </div>
+          </div>
+          <div class="pert-table-wrap">
+            <table class="pert-table" id="pertTable"></table>
+          </div>
+        </div>
+        <!-- TABULAR -->
+        <div id="tabularView" style="display:none">
+          <div class="pert-toolbar" style="padding:0 0 10px 0">
+            <span style="font-size:.85rem;font-weight:700;color:var(--yd-primary)">All Tasks — Right-click row for phase-specific subtask</span>
+            <button class="btn-outline-yd ms-auto" onclick="switchTab('comp',document.querySelectorAll('.ws-tab')[2])">Component Register <i class="fa fa-arrow-right ms-1"></i></button>
+          </div>
+          <div class="task-table-wrap">
+            <table class="task-table" id="taskTable">
+              <thead><tr>
+                <th style="width:40%">Task</th>
+                <th>Phase</th>
+                <th>Start</th>
+                <th>End</th>
+                <th>Days</th>
+                <th style="width:90px">Actions</th>
+              </tr></thead>
+              <tbody id="taskBody"></tbody>
+            </table>
+          </div>
+        </div>
+        <!-- COMP -->
+        <div id="compView" style="display:none">
+          <div class="comp-toolbar flex-column align-items-start gap-2">
+            <div class="d-flex gap-2 flex-wrap" id="asmSelector"></div>
+            <div class="d-flex gap-2 flex-wrap align-items-center w-100">
+              <span style="font-family:'Nunito',sans-serif;font-weight:800;color:var(--yd-primary)" id="compTitle">Components</span>
+              <span class="cr-badge ms-1">CR = Change Request</span>
+              <div style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap">
+                <label class="btn-outline-yd" style="cursor:pointer;padding:5px 12px;font-size:.78rem;margin:0">
+                  <i class="fa fa-folder-open me-1"></i>Upload Folder
+                  <input type="file" id="folderInput" webkitdirectory multiple style="display:none" onchange="handleFolderUpload(event)">
+                </label>
+                <label class="btn-outline-yd" style="cursor:pointer;padding:5px 12px;font-size:.78rem;margin:0">
+                  <i class="fa fa-file-pdf me-1"></i>Add PDF
+                  <input type="file" id="pdfInput" accept=".pdf" style="display:none" onchange="handleSinglePDF(event)">
+                </label>
+                <button class="btn-yd" onclick="addCompRow()" style="padding:5px 12px;font-size:.78rem"><i class="fa fa-plus me-1"></i>Add Row</button>
+                <button class="btn-outline-yd" onclick="exportCompCSV()" style="padding:5px 12px;font-size:.78rem"><i class="fa fa-file-excel me-1"></i>Export CSV</button>
+              </div>
+            </div>
+          </div>
+          <div class="comp-sheet-wrap">
+            <table class="comp-sheet" id="compSheet">
+              <thead>
+                <tr>
+                  <th class="row-num">#</th>
+                  <th style="min-width:180px">A — Description</th>
+                  <th style="min-width:110px">B — Drawing PDF</th>
+                  <th style="min-width:130px">C — Drawing No.</th>
+                  <th style="min-width:60px">D — Qty</th>
+                  <th style="min-width:130px">E — Material</th>
+                  <th style="min-width:90px">F — Weight</th>
+                  <th class="pm-col" style="min-width:140px">G — Vendor</th>
+                  <th class="pm-col" style="min-width:110px">H — PO No.</th>
+                  <th class="pm-col" style="min-width:100px">I — Price</th>
+                  <th class="pm-col" style="min-width:110px">J — Dispatch Date</th>
+                  <th class="pm-col" style="min-width:110px">K — Status</th>
+                </tr>
+              </thead>
+              <tbody id="compBody"></tbody>
+            </table>
+          </div>
+          <div class="paste-hint">
+            <i class="fa fa-paste me-1"></i>
+            Paste Excel data anywhere in the table (Ctrl+V) — multiple rows paste into consecutive rows automatically.
+            Tab / Arrow keys to navigate cells. Right-click for row options.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container-fluid" style="padding:0 50px">
+    <div class="row gy-3">
+      <div class="col-lg-3 col-md-6"><img height="80" src="yd-footer.png" onerror="this.src='https://via.placeholder.com/150x60?text=YD+Footer'"></div>
+      <div class="col-lg-3 col-md-6"><h4>Products</h4><ul><li><a href="#">Cold Rolling Mills</a></li><li><a href="#">GI/GL Lines</a></li><li><a href="#">Color Coating Lines</a></li><li><a href="#">Pickling Lines</a></li><li><a href="#">Electrical &amp; Automation</a></li></ul></div>
+      <div class="col-lg-3 col-md-6"><h4>Information</h4><ul><li><a href="#">Company Profile</a></li><li><a href="#">Infrastructure</a></li><li><a href="#">CSR Policy</a></li><li><a href="#">Contact Us</a></li></ul></div>
+      <div class="col-lg-3 col-md-6"><h4>Get In Touch</h4><ul><li><a href="#">147-148, Sector-58, Faridabad 121004</a></li><li><a href="tel:+911294295200">+91 129 429 5200</a></li><li><a href="mailto:sales@ydgroup.com">sales@ydgroup.com</a></li></ul></div>
+    </div>
+  </div>
+  <div class="container copyright"><p>© Copyright <strong>YOGIJI DIGI</strong> — All Rights Reserved</p></div>
+</footer>
+
+<input type="file" id="slProjectInput" accept=".sl" style="display:none" onchange="importSL(event)">
+
+<!-- CTX MENU -->
+<div id="ctxMenu"></div>
+
+<!-- MODALS -->
+<!-- Change Request -->
+<div class="modal fade" id="crModal" tabindex="-1">
+  <div class="modal-dialog"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title"><i class="fa fa-file-signature me-2"></i>Drawing Change Request</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+    <div class="modal-body">
+      <div class="row g-3">
+        <div class="col-12"><label class="form-label fw-bold">CR Type</label><select class="form-select" id="crType"><option>Update / Revision</option><option>Replace Drawing</option><option>Delete Drawing</option></select></div>
+        <div class="col-12"><label class="form-label fw-bold">Drawing Number Affected</label><input type="text" class="form-control" id="crDrawing"></div>
+        <div class="col-12"><label class="form-label fw-bold">Reason for Change</label><textarea class="form-control" id="crReason" rows="3"></textarea></div>
+        <div class="col-12"><label class="form-label fw-bold">Upload New Drawing</label><input type="file" class="form-control" accept=".pdf"></div>
+        <div class="col-12"><div class="alert alert-warning small py-2 mb-0"><i class="fa fa-triangle-exclamation me-1"></i>This CR will be logged and sent to Design Team for approval.</div></div>
+      </div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button class="btn btn-danger" onclick="submitCR()"><i class="fa fa-paper-plane me-1"></i>Submit CR</button></div>
+  </div></div>
+</div>
+
+<!-- PERT Cell (days + optional dates) -->
+<div class="modal fade" id="pertCellModal" tabindex="-1">
+  <div class="modal-dialog modal-sm modal-dialog-centered"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title" id="pertCellTitle">Set Duration</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+    <div class="modal-body">
+      <div class="mb-2"><span class="fw-bold text-primary small" id="pertCellAsm"></span></div>
+      <div class="mb-3">
+        <label class="form-label fw-bold">Duration (Days) <span class="text-muted fw-normal">— preferred</span></label>
+        <div class="days-input-group">
+          <input type="number" id="pertDays" min="0" placeholder="e.g. 30" class="form-control form-control-sm">
+          <span class="text-muted small">days</span>
+        </div>
+        <div class="form-text">Project end date auto-calculates from day-counts.</div>
+      </div>
+      <hr style="margin:10px 0">
+      <div class="text-muted small mb-2" style="font-weight:600">Or set specific dates:</div>
+      <div class="mb-2"><label class="form-label small">Start Date</label><input type="date" class="form-control form-control-sm" id="pertStart"></div>
+      <div class="mb-1"><label class="form-label small">End Date</label><input type="date" class="form-control form-control-sm" id="pertEnd"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline-danger btn-sm" onclick="clearPertCell()">Clear</button>
+      <button class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+      <button class="btn btn-primary btn-sm" onclick="savePertCell()">Set</button>
+    </div>
+  </div></div>
+</div>
+
+<!-- Date edit (tabular) -->
+<div class="modal fade" id="dateModal" tabindex="-1">
+  <div class="modal-dialog modal-sm modal-dialog-centered"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title">Edit Duration</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+    <div class="modal-body">
+      <div class="fw-bold text-primary small mb-3" id="dateTaskName"></div>
+      <div class="mb-2"><label class="form-label fw-bold">Days</label><input type="number" class="form-control" id="dtDays" min="0" placeholder="e.g. 30"></div>
+      <div class="mb-2"><label class="form-label fw-bold">Start Date (optional)</label><input type="date" class="form-control" id="dtStart"></div>
+      <div class="mb-2"><label class="form-label fw-bold">End Date (optional)</label><input type="date" class="form-control" id="dtEnd"></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button><button class="btn btn-primary btn-sm" onclick="saveDates()">Save</button></div>
+  </div></div>
+</div>
+
+<!-- New Project -->
+<div class="modal fade" id="newProjModal" tabindex="-1">
+  <div class="modal-dialog modal-md"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title"><i class="fa fa-plus-circle me-2"></i>Create New Project</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+    <div class="modal-body">
+      <div class="row g-3">
+        <div class="col-md-6"><label class="form-label fw-bold">Project Code</label><input type="text" class="form-control" id="npCode" placeholder="e.g. 2610-XYZ-CGL"></div>
+        <div class="col-md-6"><label class="form-label fw-bold">Client</label><input type="text" class="form-control" id="npClient" placeholder="e.g. JSW Steel"></div>
+        <div class="col-md-6"><label class="form-label fw-bold">Site / Location</label><input type="text" class="form-control" id="npSite" placeholder="e.g. Bellary"></div>
+        <div class="col-md-6"><label class="form-label fw-bold">Machine Type</label><input type="text" class="form-control" id="npMachine" placeholder="e.g. CGL"></div>
+        <div class="col-md-6"><label class="form-label fw-bold">Project Manager</label><select class="form-select" id="npPM"><option>Aditya Saini</option><option>Saurabh Jangra</option><option>Mayank Bandha</option></select></div>
+        <div class="col-md-6"><label class="form-label fw-bold">Due Date</label><input type="date" class="form-control" id="npDue"></div>
+        <div class="col-md-6"><label class="form-label fw-bold">PO Value (₹)</label><input type="number" class="form-control" id="npPO" placeholder="e.g. 45000000"></div>
+      </div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button class="btn btn-primary" onclick="createProject()">Create Project</button></div>
+  </div></div>
+</div>
+
+<!-- Add Phase -->
+<div class="modal fade" id="phaseModal" tabindex="-1">
+  <div class="modal-dialog modal-sm modal-dialog-centered"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title">Add Phase</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+    <div class="modal-body"><label class="form-label fw-bold">Phase Name</label><input type="text" class="form-control" id="phaseNameInp" placeholder="e.g. Testing"></div>
+    <div class="modal-footer"><button class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button><button class="btn btn-primary btn-sm" onclick="confirmAddPhase()">Add</button></div>
+  </div></div>
+</div>
+
+<!-- Add Category -->
+<div class="modal fade" id="catModal" tabindex="-1">
+  <div class="modal-dialog modal-sm modal-dialog-centered"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title">Add Category</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+    <div class="modal-body">
+      <label class="form-label fw-bold">Category Name</label>
+      <input type="text" class="form-control" id="catNameInp" placeholder="e.g. Electrical Panels">
+      <div class="form-text">You can add assemblies to this category from the PERT chart.</div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button><button class="btn btn-primary btn-sm" onclick="confirmAddCategory()">Add</button></div>
+  </div></div>
+</div>
+
+<!-- Add Assembly (in category) -->
+<div class="modal fade" id="asmModal" tabindex="-1">
+  <div class="modal-dialog modal-sm modal-dialog-centered"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title">Add Assembly</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+    <div class="modal-body">
+      <div class="text-muted small mb-2">Category: <span id="asmModalCatName" class="fw-bold text-primary"></span></div>
+      <label class="form-label fw-bold">Assembly Name</label>
+      <input type="text" class="form-control" id="asmNameInp" placeholder="e.g. Main Control Panel">
+    </div>
+    <div class="modal-footer"><button class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button><button class="btn btn-primary btn-sm" onclick="confirmAddAsm()">Add</button></div>
+  </div></div>
+</div>
+
+<!-- PDF Viewer -->
+<div class="modal fade" id="pdfModal" tabindex="-1">
+  <div class="modal-dialog modal-xl modal-dialog-centered"><div class="modal-content" style="height:90vh">
+    <div class="modal-header"><h5 class="modal-title"><i class="fa fa-file-pdf me-2" style="color:var(--yd-red)"></i><span id="pdfTitle">Drawing</span></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+    <div class="modal-body p-0" style="overflow:hidden;flex:1">
+      <iframe id="pdfFrame" style="width:100%;height:100%;border:none;display:none"></iframe>
+      <div id="pdfPlaceholder" class="d-flex align-items-center justify-content-center h-100 flex-column gap-3" style="color:#aaa">
+        <i class="fa fa-file-pdf" style="font-size:4rem;color:#e0e0e0"></i>
+        <div style="font-size:.9rem">PDF preview available when served from a web server</div>
+        <div style="font-size:.8rem">For local use: PDFs are stored, PM can download from the system</div>
+      </div>
+    </div>
+  </div></div>
+</div>
+
+<!-- Subtask Modal -->
+<div class="modal fade" id="subModal" tabindex="-1">
+  <div class="modal-dialog modal-sm modal-dialog-centered"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title">Add Phase-Specific Subtask</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+    <div class="modal-body">
+      <div class="text-muted small mb-2">Assembly: <span id="subAsmName" class="fw-bold text-primary"></span></div>
+      <div class="text-muted small mb-3">Phase: <span id="subPhaseName" class="fw-bold" style="color:var(--yd-red)"></span></div>
+      <label class="form-label fw-bold">Subtask / Subassembly Name</label>
+      <input type="text" class="form-control" id="subNameInp" placeholder="e.g. Motor Mounting Bracket">
+    </div>
+    <div class="modal-footer"><button class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button><button class="btn btn-primary btn-sm" onclick="confirmAddSub()">Add Subtask</button></div>
+  </div></div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+<script src="yd-embedded-sl-data.js"></script>
+
+<script>
+// ============================================================
+// STATE
+// ============================================================
+let currentRole = 'PM';
+let currentProject = null;
+let currentAsm = null;
+let ctxData = {};           // context menu target info
+let pertCellTarget = null;
+let dateTargetKey = null;
+let subModalTarget = null;  // {asmId, phaseIdx}
+let addAsmCatIdx = null;
+let compCtxRowIdx = null;
+
+const phaseClasses = ['ph-0','ph-1','ph-2','ph-3','ph-4','ph-5','ph-6','ph-7','ph-8'];
+const phaseHex = ['#2a5071','#ad283f','#198754','#f77f00','#6f42c1','#0dcaf0','#ffc107','#6c757d','#20c997'];
+
+// ============================================================
+// DATA
+// ============================================================
+const STORAGE_KEY = 'yd_pre_v2';
+const META_STATE_OPTIONS = ['In Process','On Hold','Planned','Completed'];
+const META_PLAN_OPTIONS = ['Checked In','Checked Out'];
+const DEFAULT_PHASES = ['Planning','Engineering','Ordering & Mfg','Assembly','Dispatch'];
+const PROJECT_SEED_ROWS = [
+  [206, 0, "2529 - CCL 1500 MM @ 30 MPM", "DEFAULT", "Saurabh Jangra", "Checked In", "CCL", "In Process", "2026-01-22", "2025-09-30", "2027-05-29", "2026-02-10"],
+  [214, 0, "N - 2534 - BMWIL - TRIMMING - 1500MM@500MPM", "DEFAULT", "Kunal Dagar", "Checked In", "Rewinding", "In Process", "2026-02-05", "2025-08-31", "2027-03-01", "2026-03-01"],
+  [215, 0, "N - 2544 - APL - CR REWINDING LINE 750 MM @ 200 MPM", "DEFAULT", "Om Dev", "Checked In", "Rewinding", "In Process", "2026-02-05", "2025-08-31", "2027-03-01", "2026-03-01"],
+  [178, 0, "N - 2517 - 6 STAND TANDEM MILL 1500 MM @ 800 MPM", "DEFAULT", "Mayank Bandha", "Checked In", "", "In Process", "2025-06-16", "2026-03-31", "2026-12-25", "2026-03-05"],
+  [185, 0, "N - 2428 - CONTINUOUS GL LINE 1500MM @ 150 MPM", "DEFAULT", "Sachin", "Checked In", "CGL", "In Process", "2025-09-01", "2026-01-31", "2026-11-23", "2026-04-18"],
+  [209, 0, "N  - 2514 - CGL 1500 MM @ 150 MPM (24 TPH)", "DEFAULT", "Sachin", "Checked In", "CGL", "In Process", "2026-01-27", "2026-01-31", "2026-11-23", "2026-04-18"],
+  [56, 0, "N - 2409 - 6HI COLD ROLLING MILL 1250MM @ 1100 MPM", "DEFAULT", "Mayank Bandha", "Checked In", "6HI CRM", "On Hold", "2024-08-12", "2025-03-31", "2025-12-22", "2025-11-06"],
+  [134, 0, "N-2506-Furnace Equip. JSW APL", "DEFAULT", "Aditya Sharma", "Checked In", "APL", "In Process", "2025-04-01", "2026-03-31", "2026-11-12", "2025-12-11"],
+  [135, 0, "N-2506-Terminal Equip. JSW APL", "DEFAULT", "Aditya Sharma", "Checked In", "Pickling Line", "In Process", "2025-04-01", "2026-03-31", "2026-10-31", "2026-02-03"],
+  [119, 0, "N - 2414 - 6HI CRM 1250 MM @ 1200 MPM", "DEFAULT", "Aditya Sharma", "Checked In", "6HI CRM", "In Process", "2025-01-23", "2025-09-30", "2026-10-30", "2025-07-11"],
+  [208, 0, "N - 2533 - PICKLING LINE - 2000MM @ 130MPM", "DEFAULT", "Aditya Saini", "Checked In", "Pickling Line", "In Process", "2026-01-23", "2025-09-30", "2026-10-26", "2025-10-30"],
+  [152, 0, "N - 2511 - 6HI CRM 1500 MM @ 800 MPM", "DEFAULT", "Mayank Bandha", "Checked In", "6HI CRM", "In Process", "2025-07-23", "2026-03-13", "2026-10-16", "2026-02-20"],
+  [177, 0, "N - 2521 - 6HI COLD ROLLING MILL 1500MM @ 1400 MPM", "DEFAULT", "Mayank Bandha", "Checked In", "6HI CRM", "In Process", "2025-06-13", "2026-02-08", "2026-10-15", "2025-11-08"],
+  [183, 0, "N - 2527 GI GL LINE 1350 MM @180 MPM", "DEFAULT", "Saurabh Jangra", "Checked In", "CGL", "In Process", "2025-09-01", "2026-03-31", "2026-10-14", "2026-02-19"],
+  [144, 0, "N - 2501 - 6HI CRM1250 MM @ 1200 MPM", "DEFAULT", "Mayank Bandha", "Checked In", "6HI CRM", "In Process", "2025-04-24", "2026-02-08", "2026-10-14", "2025-11-08"],
+  [41, 0, "2406- Rewinding cum Trimming Line-1680 MM@ 300/500 MPM", "DEFAULT", "Sugreev Yadav", "Checked In", "Rewinding", "On Hold", "2025-02-02", "2024-12-31", "2025-08-10", "2025-02-02"],
+  [147, 0, "N - 2217 - JSW CCL", "DEFAULT", "Saurabh Jangra", "Checked In", "", "In Process", "2025-04-28", "2025-08-08", "2026-10-07", "2025-10-28"],
+  [218, 0, "N - 2606 - SHYAM- PPL 1500MM @120MPM", "DEFAULT", "Aditya Saini", "Checked In", "Pickling Line", "In Process", "2026-02-20", "2026-03-31", "2026-10-06", "2026-08-21"],
+  [125, 0, "N - 2406- JSOL REWINDING CUM TRIMMING LINE 300-500 MPM", "DEFAULT", "Saurabh Jangra", "Checked In", "Trimming Line", "On Hold", "2025-02-05", "2025-04-26", "2026-01-19", "2025-08-06"],
+  [190, 0, "N - 2535 - POR ASSEMBLY FOR 1300 MM", "DEFAULT", "Mayank Bandha", "Checked In", "Spares", "In Process", "2025-10-09", "2026-02-28", "2026-10-02", "2026-04-06"],
+  [115, 0, "N - 2420 COLOR COATING LINE 1500MM @ 50MPM", "DEFAULT", "Saurabh Jangra", "Checked In", "CCL", "In Process", "2025-02-03", "2025-09-30", "2026-10-01", "2026-02-10"],
+  [129, 0, "N - 2504 - BACKUP ROLL ASSEMBLY", "DEFAULT", "Aditya Sharma", "Checked In", "Spares", "In Process", "2025-03-12", "2025-04-12", "2026-09-25", "2025-08-30"],
+  [132, 0, "N - 2421 - FURNACE EQIP. - Continuous Galvanizing Line 750 MM @90 MPM", "DEFAULT", "Sachin", "Checked In", "CGL", "In Process", "2025-01-30", "2025-10-01", "2026-09-24", "2025-04-30"],
+  [182, 0, "N - 2518 - 4HI HR SKIN PASS MILL 1650MM @ 350 MPM", "DEFAULT", "Mayank Bandha", "Checked In", "SPM", "In Process", "2025-07-10", "2026-02-28", "2026-09-23", "2025-07-04"],
+  [180, 0, "N - 2522 4HI SKIN PASS MILL 750 MM @ 150MPM", "DEFAULT", "Aditya Saini", "Checked In", "SPM", "In Process", "2025-07-21", "2026-03-31", "2026-09-12", "2025-06-30"],
+  [145, 0, "N - 2420 CCL OVEN", "DEFAULT", "Saurabh Jangra", "Checked In", "", "In Process", "2025-04-25", "2025-09-30", "2026-09-11", "2025-09-29"],
+  [146, 0, "N - 2508 - SPARES FOR GALVALUME LINE", "DEFAULT", "Yogesh Bawliya", "Checked In", "Spares", "In Process", "2025-04-28", "2025-08-31", "2026-09-11", "2025-10-02"],
+  [148, 0, "N - 2420 - UTILITY", "DEFAULT", "Saurabh Jangra", "Checked In", "", "In Process", "2025-04-29", "2025-07-31", "2026-09-11", "2025-10-03"],
+  [194, 0, "N - 2543 - SPARES FOR GALVANIZING LINE 750MM @ 90 MPM", "DEFAULT", "Anandhu Gopan", "Checked In", "Spares", "In Process", "2025-10-09", "2025-03-31", "2026-09-11", "2026-03-16"],
+  [122, 0, "N - 2421 - TERMINAL EQUIP. - Continuous Galvanizing Line 750 MM @90 MPM", "DEFAULT", "Sachin", "Checked In", "CGL", "In Process", "2025-01-30", "2025-12-01", "2026-09-05", "2025-03-05"],
+  [83, 0, "N - 2412 - Mill Spares", "DEFAULT", "Mayank Bandha", "Checked In", "Spares", "In Process", "2024-09-17", "2025-03-31", "2026-09-04", "2025-04-24"],
+  [84, 0, "N - 2405  JSOL REWINDING CUM TRIMMING LINE 500MPM", "DEFAULT", "Saurabh Jangra", "Checked In", "Trimming Line", "In Process", "2024-09-18", "2025-09-30", "2026-08-28", "2025-06-12"],
+  [118, 0, "N - 2425 - 6HI CRM1250 MM @ 1200 MPM", "DEFAULT", "Mayank Bandha", "Checked In", "6HI CRM", "In Process", "2025-01-08", "2025-09-30", "2026-08-21", "2025-01-19"],
+  [94, 0, "N - 2418 CLARIOS SPARES", "DEFAULT", "Mayank Bandha", "Checked In", "Spares", "In Process", "2024-10-11", "2025-01-20", "2026-08-16", "2025-03-25"],
+  [121, 0, "N - 2404 4HI SKIN PASS MILL 650 MM @ 200MPM", "DEFAULT", "Aditya Sharma", "Checked In", "SPM", "In Process", "2025-01-14", "2025-09-30", "2026-08-16", "2025-06-24"],
+  [169, 0, "N - 2427 - 6HI CRM 1500 MM @ 1400 MPM", "DEFAULT", "Mayank Bandha", "Checked In", "6HI CRM", "In Process", "2025-04-24", "2026-02-08", "2026-08-16", "2025-12-14"],
+  [88, 0, "N - 2305 - 30 TPH FURNACE", "DEFAULT", "Saurabh Jangra", "Checked In", "", "In Process", "2024-09-25", "2025-09-30", "2026-07-26", "2025-03-08"],
+  [141, 0, "N - 2426 - PICKLING LINE - 1650 MM", "DEFAULT", "Aditya Saini", "Checked In", "Pickling Line", "In Process", "2025-04-16", "2025-09-30", "2026-07-14", "2025-10-30"],
+  [189, 0, "N - 2543-SPARES FOR GALVANIZING LINE 750MM @ 90 MPM", "DEFAULT", "Anandhu Gopan", "Checked In", "", "In Process", "2025-10-08", "2026-01-31", "2026-07-14", "2026-01-14"],
+  [95, 0, "N - 2231 - 6HI COLD ROLLING MILL", "DEFAULT", "Saurabh Jangra", "Checked In", "6HI CRM", "In Process", "2024-10-24", "2025-07-31", "2026-07-14", "2025-06-19"],
+  [184, 0, "N - 2420 - UTILITY.", "DEFAULT", "Saurabh Jangra", "Checked In", "", "In Process", "2025-08-26", "2025-10-31", "2026-07-08", "2025-11-25"],
+  [120, 0, "N - 2424 - 6HI CRM1250 MM @ 1200 MPM", "DEFAULT", "Mayank Bandha", "Checked In", "6HI CRM", "In Process", "2025-01-09", "2025-09-30", "2026-07-03", "2025-01-31"],
+  [136, 0, "Design Schedule", "DEFAULT", "sachintb", "Checked In", "", "In Process", "2025-03-28", "2025-09-30", "2026-06-26", "2025-09-27"],
+  [188, 0, "N - 2523 BACK COAT HEAD FOR CC1350 MM @ 60 MPM", "DEFAULT", "sachintb", "Checked In", "", "In Process", "2025-09-08", "2025-12-30", "2026-05-04", "2026-02-19"],
+  [103, 0, "N - 2407 Pickling Line 750", "DEFAULT", "Sachin", "Checked In", "Pickling Line", "In Process", "2024-11-05", "2025-07-31", "2026-04-30", "2025-06-10"],
+  [142, 0, "PRACTICE PROJECT", "DEFAULT", "sachintb", "Checked In", "", "In Process", "2025-03-28", "2025-09-30", "2026-04-26", "2025-03-20"],
+  [81, 0, "N-2306 4HI Revamp", "DEFAULT", "Mayank Bandha", "Checked In", "6HI CRM", "In Process", "2024-09-18", "2025-02-28", "2026-04-07", "2024-12-14"],
+  [139, 0, "N-2415- UTTAM-TRIMMING 1500MM", "DEFAULT", "Aditya Saini", "Checked In", "Rewinding", "In Process", "2025-04-07", "2025-08-31", "2026-04-07", "2026-03-01"],
+  [193, 0, "N - 2536 -  PP PICKLING LINE REVAMP 1335 MM @ 130 MPM", "DEFAULT", "Anandhu Gopan", "Checked In", "Spares", "In Process", "2025-10-09", "2025-02-28", "2026-04-20", "2025-10-22"],
+  [195, 0, "N - 2544 - CR REWINDING LINE 750 MM @ 200 MPM", "DEFAULT", "Anandhu Gopan", "Checked In", "Rewinding", "In Process", "2025-10-09", "2025-03-31", "2026-04-20", "2025-10-22"],
+  [196, 0, "N - 2527 - FURNACE", "DEFAULT", "Saurabh Jangra", "Checked In", "CGL", "In Process", "2025-10-09", "2025-02-01", "2026-04-20", "2025-10-22"],
+  [200, 0, "N - 2516 - PUSH PULL PICKLING - 1650MM @ 180MPM", "DEFAULT", "Aditya Saini", "Checked In", "Pickling Line", "In Process", "2025-11-13", "2026-04-01", "2026-04-20", "2025-11-26"],
+  [52, 0, "N - 2207 - 6HI CRM 1500 MM @ 1200 MPM", "DEFAULT", "Aditya Sharma", "Checked In", "6HI CRM", "In Process", "2024-08-05", "2025-09-30", "2026-04-15", "2025-01-11"],
+  [114, 0, "N - 2416 - BURR MASHER ASSY", "DEFAULT", "Aditya Saini", "Checked In", "Spares", "In Process", "2024-12-19", "2025-02-28", "2026-04-07", "2025-03-29"],
+  [53, 0, "N - 2305 30 TPH Continuous Galvanizing Line 750 MM @90 MPM", "DEFAULT", "Saurabh Jangra", "Checked In", "CGL", "In Process", "2024-08-07", "2025-10-31", "2026-04-09", "2025-03-12"],
+  [92, 0, "N - 2305 - 30 TPH SKIN PASS MILL", "DEFAULT", "Aditya Sharma", "Checked In", "SPM", "In Process", "2024-10-03", "2025-03-31", "2026-04-07", "2025-06-11"],
+  [86, 0, "N - 2403 - 4HI COLD ROLLING MILL 650MM @ 500 MPM", "DEFAULT", "Mayank Bandha", "Checked In", "4HI CRM", "In Process", "2024-09-21", "2025-07-31", "2026-04-08", "2025-07-16"],
+  [100, 0, "N - 2419 - Recoiler Mandrel Assembly", "DEFAULT", "Aditya Saini", "Checked In", "", "In Process", "2024-11-05", "2025-01-01", "2026-04-08", "2024-12-26"],
+  [113, 0, "N - 2221 - 4HI CRM 400MM @300MPM REVAMP", "DEFAULT", "Mayank Bandha", "Checked In", "4HI CRM", "In Process", "2024-12-14", "2025-04-30", "2026-04-07", "2025-05-27"],
+  [108, 0, "Template Project Of 2405 Rewinding", "DEFAULT", "Durga", "Checked In", "Trimming Line", "Planned", "2024-11-13", "2024-12-31", "2025-07-12", "2025-06-13"],
+  [186, 0, "N - 2502 Pickling Line - 1300 MM", "DEFAULT", "Aditya Saini", "Checked In", "Pickling Line", "In Process", "2025-09-08", "2026-04-30", "2026-10-31", "2025-05-31"],
+  [126, 0, "SANJAY", "DEFAULT", "Sanjay Kumar C", "Checked In", "", "Planned", "2025-02-06", "2025-02-20", "2025-05-22", "2025-05-22"],
+  [199, 0, "N - 2212 CCL LINE 1250 MM @ 80 MPM LODHIA", "DEFAULT", "Saurabh Jangra", "Checked In", "CCL", "In Process", "2025-11-07", "2026-04-29", "2026-08-29", "2026-03-31"],
+  [201, 0, "exp", "DEFAULT", "Durga", "Checked In", "", "In Process", "2025-11-17", "2026-05-14", "2026-10-27", "2026-06-05"],
+  [33, 0, "2414-6HI CRM 1500MM", "DEFAULT", "Mayank Bandha", "Checked In", "6HI CRM", "On Hold", "2024-07-12", "2025-06-07", "2025-12-18", "2025-06-16"],
+  [131, 0, "N - 2422 - FURNACE EQUIP. - WET FLUX TO GL LINE CONVERSION 1050MM @ 120MPM", "DEFAULT", "Yogesh Bawliya", "Checked In", "CGL", "On Hold", "2025-03-14", "2025-10-31", "2026-01-20", "2025-09-14"],
+  [137, 0, "PENDING DRAWINGS", "DEFAULT", "sachintb", "Checked In", "", "Planned", "2025-04-04", "2025-04-30", "2025-05-07", "2025-04-17"],
+  [220, 0, "N - 2607- JSW BAWAL - RECOILER ASSEMBLY", "DEFAULT", "sachintb", "Checked In", "Spares", "In Process", "2026-03-17", "2026-08-17", "2026-10-21", "2026-09-30"],
+  [138, 0, "N - 2422 - TERMINAL EQUIP. - WET FLUX TO GL LINE CONVERSION 1050MM @ 120MPM", "DEFAULT", "Aditya Saini", "Checked In", "", "On Hold", "2025-04-06", "2025-11-30", "2026-01-27", "2025-12-08"],
+  [89, 0, "Copy Template", "DEFAULT", "Durga", "Checked In", "Trimming Line", "Planned", "2024-07-12", "2024-12-31", "2025-02-10", "2025-01-31"],
+  [112, 0, "Template Project Of 230G CGL", "DEFAULT", "Durga", "Checked In", "CGL", "Planned", "2024-08-07", "2025-03-31", "2025-05-13", "2025-03-28"],
+  [219, 0, "TEST PROJECT 3-3-26", "DEFAULT", "Sarthakhanda", "Checked In", "", "In Process", "2026-03-03", "2026-08-31", "2026-09-29", "2026-09-04"],
+  [156, 0, "N- 2516 - PICKLING LINE 1650 MM", "DEFAULT", "Shivendu Sharma", "Checked In", "Pickling Line", "Planned", "2025-12-31", "2026-06-30", "2026-07-14", "2026-07-14"],
+  [67, 1, "2221 -Transition", "DEFAULT", "Aditya Sharma", "Checked In", "Transition", "On Hold", "2024-07-16", "2024-10-27", "2024-10-28", "2024-11-04"],
+  [157, 1, "N - 2519 - CGL LINE TERMINAL EQP 1500 MM @ 220 MPM", "DEFAULT", "Tripurari Kumar", "Checked In", "CGL", "In Process", "2026-02-14", "2026-12-31", "2026-10-26", "2026-07-22"],
+  [151, 1, "N - 2509 - 6HI CRM1250 MM @ 1200 MPM", "DEFAULT", "Shivendu Sharma", "Checked In", "6HI CRM", "Planned", "2025-03-25", "2026-02-08", "2025-11-20", "2025-10-01"],
+  [55, 1, "Transitin Projects", "DEFAULT", "Gaurav Purohit", "Checked In", "", "Planned", "2024-07-16", "2024-08-31", "2024-08-23", "2024-07-31"],
+  [216, 1, "BMWIL -SPARES", "DEFAULT", "Mayank Bandha", "Checked In", "Spares", "In Process", "2026-02-05", "2027-02-04", "2026-10-07", "2026-08-21"],
+  [155, 1, "N - 2513 -CR SLITTING LINE1500 MM @ 150 MPM", "DEFAULT", "sachintb", "Checked In", "Slitting", "Planned", "2025-09-05", "2026-07-30", "2026-03-14", "2026-03-14"],
+  [158, 1, "N - 2520 - COLOUR COATING LINE 1500MM @ 150 MPM", "DEFAULT", "sachintb", "Checked In", "CCL", "Planned", "2026-01-01", "2026-12-31", "2026-07-22", "2026-07-22"],
+  [192, 1, "N - 2534 - REWINDING CUM TRIMMING - 1500MM@500MPM", "DEFAULT", "Anandhu Gopan", "Checked In", "TRIMMING", "In Process", "2025-10-09", "2026-04-30", "2026-04-20", "2025-10-22"],
+  [211, 2, "N - 2601 - BMWIL - 6 HI COLD ROLLING MILL 1250 MM @ 1200 MPM", "DEFAULT", "Mayank Bandha", "Checked In", "6HI CRM", "In Process", "2026-03-10", "2027-02-04", "2026-08-29", "2026-07-13"],
+  [150, 4, "N -2510 - PICKLING LINE-1650MM", "DEFAULT", "Shivendu Sharma", "Checked In", "Pickling Line", "Planned", "2025-05-12", "2026-03-31", "2025-07-24", "2025-07-23"],
+  [153, 5, "N - 2512 - TRIMMING LINE - 1500 MM", "DEFAULT", "Shivendu Sharma", "Checked In", "Trimming Line", "Planned", "2025-07-31", "2026-04-30", "2025-09-16", "2025-09-16"],
+  [198, 6, "N - 2537 - 5 STAND TANDEM MILL 1500 MM @ 800 MPM", "DEFAULT", "Mayank Bandha", "Checked In", "", "In Process", "2025-11-06", "2026-06-30", "2026-04-20", "2025-11-19"],
+  [154, 6, "N - 2512 - CR SLITTING LINE 1500 MM @150 MPM", "DEFAULT", "sachintb", "Checked In", "Slitting", "Planned", "2025-08-31", "2026-08-31", "2025-10-22", "2025-10-22"],
+  [202, 18, "N - 2548 - TWIN STAND COLD ROLLING MILL 750 MM", "DEFAULT", "Mayank Bandha", "Checked In", "", "In Process", "2025-12-02", "2026-12-02", "2026-04-20", "2025-12-15"],
+  [47, 0, "N - 2401 - TRIMMER -1350 MM @ 500 MPM", "DEFAULT", "Aditya Saini", "Checked In", "Trimming Line", "Completed", "2024-08-03", "2024-12-31", "2025-04-01", "2025-02-22"],
+  [48, 0, "N - 2302 Pickling Line 1250MM @80 MPM", "DEFAULT", "Sachin", "Checked In", "Pickling Line", "Completed", "2024-08-26", "2025-02-28", "2025-03-17", "2024-11-12"],
+  [50, 0, "N - 2301 - 6HI CRM1250 MM @ 1100 MPM", "DEFAULT", "Mayank Bandha", "Checked In", "6HI CRM", "Completed", "2024-08-07", "2025-05-31", "2025-07-23", "2024-12-02"],
+  [51, 0, "N -  2310 4HI CRM 800 MM @ 600 MPM", "DEFAULT", "Mayank Bandha", "Checked In", "6HI CRM", "Completed", "2024-08-01", "2025-02-28", "2025-04-17", "2024-12-09"],
+  [57, 0, "2212 -Transition", "DEFAULT", "Saurabh Jangra", "Checked In", "Transition", "Completed", "2024-07-16", "2024-08-25", "2024-11-20", "2024-09-02"],
+  [58, 0, "2223-Transition", "DEFAULT", "Gaurav Purohit", "Checked In", "Transition", "Completed", "2024-07-16", "2024-07-20", "2024-08-12", "2024-07-19"],
+  [59, 0, "2122-Transition", "DEFAULT", "Gaurav Purohit", "Checked In", "Transition", "Completed", "2024-07-16", "2024-07-28", "2024-08-21", "2024-07-29"],
+  [60, 0, "2209-Transition", "DEFAULT", "Gaurav Purohit", "Checked In", "Transition", "Completed", "2024-07-17", "2024-07-20", "2024-08-12", "2024-07-19"],
+  [61, 0, "2238-Transition", "DEFAULT", "Sugreev Yadav", "Checked In", "Transition", "Completed", "2024-07-16", "2024-07-30", "2024-11-20", "2024-07-31"],
+  [62, 0, "2012-Transition", "DEFAULT", "Aditya Saini", "Checked In", "Transition", "Completed", "2024-07-16", "2024-08-03", "2024-11-23", "2024-08-04"],
+  [63, 0, "2234-Transition", "DEFAULT", "Sugreev Yadav", "Checked In", "Transition", "Completed", "2024-07-16", "2024-07-25", "2024-11-20", "2024-07-25"],
+  [64, 0, "2233-Transition", "DEFAULT", "Sachin", "Checked In", "Transition", "Completed", "2024-07-16", "2024-09-30", "2024-12-06", "2024-10-07"],
+  [65, 0, "2213-Transition", "DEFAULT", "Sachin", "Checked In", "Transition", "Completed", "2024-07-16", "2024-09-20", "2024-11-23", "2024-09-26"],
+  [66, 0, "2219 -Transition", "DEFAULT", "Mayank Bandha", "Checked In", "Transition", "Completed", "2024-07-16", "2024-08-10", "2024-10-25", "2024-08-12"],
+  [68, 0, "2218 -Transition", "DEFAULT", "Mayank Bandha", "Checked In", "Transition", "Completed", "2024-07-16", "2024-08-17", "2024-11-22", "2024-08-20"],
+  [69, 0, "2217 -Transition", "DEFAULT", "Saurabh Jangra", "Checked In", "Transition", "Completed", "2024-07-16", "2024-09-05", "2024-11-22", "2024-09-19"],
+  [70, 0, "2114  -Transition", "DEFAULT", "Aditya Saini", "Checked In", "Transition", "Completed", "2024-07-16", "2024-09-10", "2024-10-25", "2024-09-13"],
+  [71, 0, "2119  -Transition", "DEFAULT", "Aditya Saini", "Checked In", "Transition", "Completed", "2024-07-04", "2024-10-10", "2024-11-20", "2024-09-02"],
+  [72, 0, "N-2304-1500 LPH ACID REGENERATION PLANT", "DEFAULT", "Sachin", "Checked In", "6HI CRM", "Completed", "2024-08-09", "2025-05-31", "2025-07-23", "2024-12-26"],
+  [74, 0, "2214-Transition", "DEFAULT", "Lokesh Chaudhary", "Checked In", "Transition", "Completed", "2024-07-16", "2024-08-03", "2024-08-26", "2024-08-04"],
+  [78, 0, "N - 2402 - CR REWINDING -800 MM @ 200 MPM", "DEFAULT", "Aditya Saini", "Checked In", "Trimming Line", "In Process", "2024-09-04", "2025-05-31", "2026-04-07", "2025-04-24"],
+  [87, 0, "N - 2307 - Clarios Spare Work Roll Assy", "DEFAULT", "Mayank Bandha", "Checked In", "Spares", "Completed", "2024-09-24", "2024-10-10", "2025-02-07", "2024-10-24"],
+  [93, 0, "N - 2410 - Furnace", "DEFAULT", "Lokesh Chaudhary", "Checked In", "", "Completed", "2024-07-01", "2025-02-28", "2025-02-07", "2025-03-10"],
+  [99, 0, "N - 2011 - APL Apollo Revamp", "DEFAULT", "Aditya Saini", "Checked In", "", "Completed", "2024-11-05", "2025-01-01", "2025-02-04", "2025-02-14"],
+  [105, 0, "N - 2239- TRIMMER -1650MM", "DEFAULT", "Aditya Saini", "Checked In", "", "In Process", "2024-12-04", "2025-06-30", "2026-04-07", "2025-06-03"],
+  [170, 0, "shriyans test project", "DEFAULT", "sachintb", "Checked Out", "", "Planned", "2025-06-13", "2025-09-13", "", ""],
+  [210, 0, "N - 2532 - BMWIL - SLITTING 2000MM@150MPM", "DEFAULT", "Om Dev", "Checked In", "Slitting", "In Process", "2026-03-12", "2027-02-04", "", ""],
+  [212, 0, "N - 2602 - BMWIL - HR SLITTING LINE, 2000MM@150MPM", "DEFAULT", "Om Dev", "Checked In", "Slitting", "In Process", "2026-03-12", "2027-02-04", "", ""],
+  [213, 0, "N - 2603 - BMWIL - REWINDING CUM TRIMMING - 1500MM@500MPM", "DEFAULT", "Kunal Dagar", "Checked In", "Rewinding", "In Process", "2026-03-12", "2027-02-04", "", ""]
+];
+
+function trimOrBlank(v){ return (v==null?'':String(v)).trim(); }
+function splitLabels(v){ return (Array.isArray(v)?v:[trimOrBlank(v)]).join(',').split(',').map(s=>s.trim()).filter(Boolean); }
+function normalizeDate(v){ return trimOrBlank(v); }
+function normalizeState(v){ const s=trimOrBlank(v); return META_STATE_OPTIONS.includes(s)?s:'In Process'; }
+function normalizePlanStatus(v){ const s=trimOrBlank(v); return META_PLAN_OPTIONS.includes(s)?s:'Checked In'; }
+function progressFromState(state){ return state==='Completed'?100:state==='On Hold'?35:state==='Planned'?10:55; }
+function extractProjectNumber(name,fallback=''){
+  const m = trimOrBlank(name).match(/(\d{4})/);
+  return m ? m[1] : trimOrBlank(fallback);
+}
+function normalizeCheckoutDraft(draft, project){
+  const base = draft && typeof draft==='object' ? draft : {};
+  return {
+    projectName: trimOrBlank(base.projectName || project.projectName || project.importedName || project.client || project.code),
+    pm: trimOrBlank(base.pm ?? project.pm),
+    labels: trimOrBlank(base.labels ?? splitLabels(project.labels).join(', ')),
+    state: normalizeState(base.state || project.state),
+    startDate: normalizeDate(base.startDate || project.startDate),
+    dueDate: normalizeDate(base.dueDate || project.dueDate),
+    projectedDate: normalizeDate(base.projectedDate || project.projectedDate),
+    plannedEnd: normalizeDate(base.plannedEnd || project.plannedEnd)
+  };
+}
+function normalizeProject(project, seedOrder=0){
+  const projectName = trimOrBlank(project.projectName || project.importedName || project.client || project.code || `Project ${seedOrder+1}`);
+  const code = trimOrBlank(project.code || project.projectNumber || extractProjectNumber(projectName) || `PRJ-${project.id || seedOrder+1}`);
+  const projectNumber = trimOrBlank(project.projectNumber || extractProjectNumber(projectName, code) || code);
+  const state = normalizeState(project.state);
+  const planStatus = normalizePlanStatus(project.planStatus);
+  const normalized = {
+    id: project.id ?? Date.now()+seedOrder,
+    seedOrder: project.seedOrder ?? seedOrder,
+    rowIndex: Number(project.rowIndex ?? project.index ?? 0) || 0,
+    code,
+    projectNumber,
+    projectName,
+    client: trimOrBlank(project.client || projectName),
+    site: trimOrBlank(project.site),
+    machine: trimOrBlank(project.machine),
+    division: trimOrBlank(project.division || 'DEFAULT'),
+    pm: trimOrBlank(project.pm),
+    planStatus,
+    labels: splitLabels(project.labels),
+    state,
+    startDate: normalizeDate(project.startDate),
+    dueDate: normalizeDate(project.dueDate),
+    projectedDate: normalizeDate(project.projectedDate),
+    plannedEnd: normalizeDate(project.plannedEnd),
+    checkoutLockedBy: trimOrBlank(project.checkoutLockedBy),
+    checkoutAt: trimOrBlank(project.checkoutAt),
+    poValue: Number(project.poValue || 0),
+    progress: Number.isFinite(Number(project.progress)) ? Number(project.progress) : progressFromState(state),
+    phases: Array.isArray(project.phases) && project.phases.length ? project.phases : [...DEFAULT_PHASES],
+    categories: Array.isArray(project.categories) ? project.categories : [],
+    components: project.components || {},
+    importedName: trimOrBlank(project.importedName),
+    slDetails: project.slDetails || null,
+    lastImportedFile: trimOrBlank(project.lastImportedFile),
+    lastImportedAt: trimOrBlank(project.lastImportedAt)
+  };
+  normalized.checkoutDraft = planStatus==='Checked Out' ? normalizeCheckoutDraft(project.checkoutDraft, normalized) : null;
+  return normalized;
+}
+function buildProjectSeed(){
+  return PROJECT_SEED_ROWS.map((row, idx)=>normalizeProject({
+    id: row[0],
+    rowIndex: row[1],
+    projectName: row[2],
+    division: row[3],
+    pm: row[4],
+    planStatus: row[5],
+    labels: row[6],
+    state: row[7],
+    startDate: row[8],
+    dueDate: row[9],
+    projectedDate: row[10],
+    plannedEnd: row[11],
+    phases: [...DEFAULT_PHASES],
+    categories: [],
+    components: {}
+  }, idx));
+}
+function isLegacyDemoOnly(list){ return Array.isArray(list) && list.length===1 && list[0]?.code==='2601-BMWIL-CGL'; }
+function mergeProjects(seed, saved){
+  const map = new Map();
+  seed.forEach(p=>map.set(String(p.id), p));
+  saved.forEach((project, idx)=>{
+    const key = String(project?.id ?? `saved-${idx}`);
+    const base = map.get(key) || {};
+    map.set(key, normalizeProject({
+      ...base,
+      ...project,
+      categories: Array.isArray(project?.categories) ? project.categories : (base.categories || []),
+      components: project?.components || base.components || {},
+      phases: Array.isArray(project?.phases) && project.phases.length ? project.phases : (base.phases || [...DEFAULT_PHASES])
+    }, base.seedOrder ?? seed.length + idx));
+  });
+  return Array.from(map.values()).sort((a,b)=>(a.seedOrder??999999)-(b.seedOrder??999999)||String(a.projectNumber).localeCompare(String(b.projectNumber),undefined,{numeric:true}));
+}
+function loadData(){
+  const seed = buildProjectSeed();
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if(!raw) return seed;
+  try{
+    const saved = JSON.parse(raw);
+    if(!Array.isArray(saved) || isLegacyDemoOnly(saved)) return seed;
+    return mergeProjects(seed, saved);
+  }catch(_){
+    return seed;
+  }
+}
+function saveData(){ localStorage.setItem(STORAGE_KEY,JSON.stringify(APP)); }
+
+let APP = loadData();
+
+function genDemo(){
+  const p = (offset)=>{ const d=new Date(); d.setDate(d.getDate()+offset); return d.toISOString().split('T')[0]; };
+  return [{
+    id:1, code:'2601-BMWIL-CGL', client:'BMWIL', site:'Mumbai', machine:'CGL',
+    pm:'Aditya Saini', dueDate:p(180), poValue:45000000, progress:35,
+    phases:['Engineering','Ordering & Mfg','Assembly','Dispatch','PM'],
+    categories:[
+      {id:'cat1',name:'Electrical Panels',assemblies:[
+        {id:'a1',name:'Main Control Panel',subtasks:{},dates:{0:{days:25},1:{days:60},2:{days:7},3:{days:5}}},
+        {id:'a2',name:'Drive Control Cabinet',subtasks:{},dates:{0:{days:15},1:{days:67},2:{days:7},3:{days:5}}},
+      ]},
+      {id:'cat2',name:'Mechanical Structures',assemblies:[
+        {id:'a3',name:'Entry Looper',subtasks:{
+          1:[{id:'sub1',name:'Looper Trolley'},{id:'sub2',name:'Looper Arms'}]
+        },dates:{0:{days:20},1:{days:52},2:{days:7},3:{days:7}}},
+        {id:'a4',name:'Exit Looper',subtasks:{},dates:{0:{days:25},1:{days:67},2:{days:10},3:{days:7}}},
+      ]},
+    ],
+    components:{'a1':genRows('MCP',8),'a2':genRows('DCC',5),'a3':genRows('EL',12),'a4':genRows('ExL',10)}
+  }];
+}
+
+function genRows(pfx,n){
+  const mats=['MS Plate 6mm','SS 304 2mm','Copper Bus 50x10','CRCA 3mm','Cast Iron'];
+  const vendors=['Siemens India','L&T Switchgear','Schneider Electric','ABB India','Bharat Bijlee',''];
+  const rows=[];
+  for(let i=1;i<=n;i++){
+    const hv=i<n-1;
+    rows.push({id:`${pfx}-${i}`,desc:`${pfx} Component ${i}`,pdfName:'',pdfData:'',drawingNo:'',qty:String(Math.ceil(Math.random()*4)+1),material:mats[i%mats.length],weight:`${(Math.random()*50+2).toFixed(1)} kg`,vendor:hv?vendors[i%vendors.length]:'',poNo:hv?`PO-2024-${String(i).padStart(4,'0')}`:'',price:hv?String(Math.floor(Math.random()*500000+10000)):'',dispatchDate:'',status:hv?['pending','ordered','received','delayed'][i%4]:'pending',crLog:[]});
+  }
+  return rows;
+}
+function getProjectTitle(project){ return trimOrBlank(project.projectName || project.importedName || project.client || project.code); }
+function getProjectNumber(project){ return trimOrBlank(project.projectNumber || extractProjectNumber(getProjectTitle(project), project.code)); }
+function getProjectDivision(project){ return trimOrBlank(project.division || 'DEFAULT'); }
+function getWorkspaceTitle(project){
+  const title=getProjectTitle(project);
+  const number=getProjectNumber(project);
+  return number && title && !title.includes(number) ? `${number} - ${title}` : title || number || project.code || 'Project';
+}
+function getProjectView(project){
+  if(normalizePlanStatus(project.planStatus)==='Checked Out'){
+    return normalizeCheckoutDraft(project.checkoutDraft, project);
+  }
+  return {
+    projectName: getProjectTitle(project),
+    pm: trimOrBlank(project.pm),
+    labels: splitLabels(project.labels).join(', '),
+    state: normalizeState(project.state),
+    startDate: normalizeDate(project.startDate),
+    dueDate: normalizeDate(project.dueDate),
+    projectedDate: normalizeDate(project.projectedDate),
+    plannedEnd: normalizeDate(project.plannedEnd)
+  };
+}
+function formatDateForDisplay(value){
+  const v = normalizeDate(value);
+  if(!v) return '—';
+  const d = new Date(v);
+  return Number.isNaN(d.getTime()) ? esc(v) : d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
+}
+function getStateClass(state){ return `state-${normalizeState(state).toLowerCase().replace(/\s+/g,'-')}`; }
+function getPlanClass(planStatus){ return normalizePlanStatus(planStatus)==='Checked Out' ? 'plan-out' : 'plan-in'; }
+function getActorLabel(){ return document.getElementById('roleLbl')?.textContent || currentRole; }
+function getDashboardProjects(){
+  const search = trimOrBlank(document.getElementById('projectSearch')?.value).toLowerCase();
+  const stateFilter = trimOrBlank(document.getElementById('projectStateFilter')?.value);
+  const planFilter = trimOrBlank(document.getElementById('projectPlanFilter')?.value);
+  return APP.filter(project=>{
+    const view = getProjectView(project);
+    const labels = splitLabels(view.labels).join(' ').toLowerCase();
+    const haystack = [
+      project.id,
+      project.rowIndex,
+      getProjectNumber(project),
+      getProjectTitle(project),
+      getProjectDivision(project),
+      view.pm,
+      labels,
+      view.state
+    ].join(' ').toLowerCase();
+    if(stateFilter && normalizeState(view.state)!==stateFilter) return false;
+    if(planFilter && normalizePlanStatus(project.planStatus)!==planFilter) return false;
+    if(search && !haystack.includes(search)) return false;
+    return true;
+  });
+}
+function renderSummary(){
+  const summary = document.getElementById('projectSummary');
+  if(!summary) return;
+  const total = APP.length;
+  const counts = META_STATE_OPTIONS.reduce((acc,state)=>{ acc[state]=APP.filter(project=>normalizeState(project.state)===state).length; return acc; },{});
+  const checkedOut = APP.filter(project=>normalizePlanStatus(project.planStatus)==='Checked Out').length;
+  summary.innerHTML = `
+    <div class="summary-pill"><span>Total Projects</span><b>${total}</b></div>
+    <div class="summary-pill"><span>In Process</span><b>${counts['In Process']||0}</b></div>
+    <div class="summary-pill"><span>On Hold</span><b>${counts['On Hold']||0}</b></div>
+    <div class="summary-pill"><span>Planned</span><b>${counts['Planned']||0}</b></div>
+    <div class="summary-pill"><span>Completed</span><b>${counts['Completed']||0}</b></div>
+    <div class="summary-pill"><span>Checked Out</span><b>${checkedOut}</b></div>`;
+}
+function beginCheckout(id){
+  const project = APP.find(item=>item.id===id);
+  if(!project || normalizePlanStatus(project.planStatus)==='Checked Out') return;
+  project.planStatus='Checked Out';
+  project.checkoutDraft=normalizeCheckoutDraft(null, project);
+  project.checkoutLockedBy=getActorLabel();
+  project.checkoutAt=new Date().toISOString();
+  saveData();
+  if(currentProject && currentProject.id===id){ currentProject=project; renderWorkspaceContext(); }
+  renderDashboard();
+}
+function updateProjectDraft(id, field, value){
+  const project = APP.find(item=>item.id===id);
+  if(!project || normalizePlanStatus(project.planStatus)!=='Checked Out') return;
+  project.checkoutDraft=normalizeCheckoutDraft(project.checkoutDraft, project);
+  project.checkoutDraft[field]=field==='state' ? normalizeState(value) : trimOrBlank(value);
+  saveData();
+}
+function checkInProject(id){
+  const project = APP.find(item=>item.id===id);
+  if(!project || normalizePlanStatus(project.planStatus)!=='Checked Out') return;
+  const draft = normalizeCheckoutDraft(project.checkoutDraft, project);
+  project.projectName=draft.projectName || project.projectName;
+  project.client=draft.projectName || project.client;
+  project.pm=draft.pm;
+  project.labels=splitLabels(draft.labels);
+  project.state=normalizeState(draft.state);
+  project.startDate=normalizeDate(draft.startDate);
+  project.dueDate=normalizeDate(draft.dueDate);
+  project.projectedDate=normalizeDate(draft.projectedDate);
+  project.plannedEnd=normalizeDate(draft.plannedEnd);
+  project.progress=progressFromState(project.state);
+  project.planStatus='Checked In';
+  project.checkoutDraft=null;
+  project.checkoutLockedBy='';
+  project.checkoutAt='';
+  if(currentProject && currentProject.id===id) currentProject=project;
+  saveData();
+  renderDashboard();
+  if(currentProject && currentProject.id===id){
+    renderWorkspaceContext();
+    document.getElementById('wsTitle').textContent=getWorkspaceTitle(project);
+    calcProjectEnd();
+  }
+}
+function undoCheckout(id){
+  const project = APP.find(item=>item.id===id);
+  if(!project || normalizePlanStatus(project.planStatus)!=='Checked Out') return;
+  project.planStatus='Checked In';
+  project.checkoutDraft=null;
+  project.checkoutLockedBy='';
+  project.checkoutAt='';
+  saveData();
+  if(currentProject && currentProject.id===id){ currentProject=project; renderWorkspaceContext(); }
+  renderDashboard();
+}
+
+function isoFromSL(value){ return trimOrBlank(value).split('T')[0] || ''; }
+function daysFromMs(ms){ const n=Number(ms||0); return n>0?Math.max(1,Math.round(n/86400000)):0; }
+function phaseNameFromSL(name){
+  const raw=trimOrBlank(name);
+  const lower=raw.toLowerCase();
+  if(lower.startsWith('engg')) return 'Engg.';
+  if(lower.includes('ordering')) return 'Ordering & Manufacturing';
+  if(lower.startsWith('assembly')) return 'Assembly';
+  if(lower.startsWith('dispatch')) return 'Dispatch';
+  return raw;
+}
+function escAttr(value){ return esc(value).replace(/'/g,'&#39;'); }
+function extractProjectLabel(name){
+  const upper=trimOrBlank(name).toUpperCase();
+  if(upper.includes('PICKLING')) return 'Pickling Line';
+  if(upper.includes('CCL') || upper.includes('COLOUR COATING')) return 'CCL';
+  if(upper.includes('CGL') || upper.includes('GALVAN')) return 'CGL';
+  if(upper.includes('SLITTING')) return 'Slitting';
+  if(upper.includes('TRIMMING')) return 'Trimming Line';
+  if(upper.includes('REWINDING')) return 'Rewinding';
+  if(upper.includes('SPARES')) return 'Spares';
+  return '';
+}
+function buildSLDetailSummary(sl, filename, shortProj, content, phaseDefs, scopes, categories){
+  const uniqueCustomCols=[...new Set((sl.customColumns||[]).flatMap(item=>(item.columns||[]).map(col=>trimOrBlank(col.name)).filter(Boolean)))];
+  const steps=(sl.steps||[]).map(item=>trimOrBlank(item.content?.name)).filter(Boolean);
+  const locations=(sl.locations||[]).map(item=>trimOrBlank(item.content?.name)).filter(Boolean);
+  const workstreams=(sl.workstreams||[]).slice(0,8).map(item=>({
+    id:item.id,
+    projectedEnd:isoFromSL(item.content?.projectedEnd),
+    delayDays:Number.isFinite(Number(item.content?.delay))?Math.round(Number(item.content.delay)/86400000):null,
+    colour:trimOrBlank(item.content?.colour),
+    chains:(item.content?.chains||[]).length
+  }));
+  return {
+    sourceFile: filename,
+    importedAt: new Date().toISOString(),
+    projectMeta:{
+      id: shortProj.id ?? '',
+      manager: trimOrBlank(shortProj.manager),
+      division: trimOrBlank(shortProj.division || content.state || 'DEFAULT'),
+      state: trimOrBlank(shortProj.state || content.state),
+      status: trimOrBlank(shortProj.status),
+      actualStart: isoFromSL(content.actualStart),
+      planners: (shortProj.planners||[]).map(trimOrBlank).filter(Boolean),
+      participants: (shortProj.participants||[]).map(trimOrBlank).filter(Boolean),
+      addlManagers: (shortProj.addlManagers||[]).map(trimOrBlank).filter(Boolean),
+      dashboardPrivilege: (shortProj.dashboardPrivilege||[]).map(trimOrBlank).filter(Boolean)
+    },
+    phaseDefs: phaseDefs.map(phase=>({id:phase.id,name:phaseNameFromSL(phase.name),start:isoFromSL(phase.startDate),end:isoFromSL(phase.endDate),columnsCount:Number(phase.columnsCount||0)})),
+    scopeNames: scopes.map(scope=>trimOrBlank(scope.name)).filter(Boolean),
+    categoryNames: categories.map(category=>category.name),
+    counts:{
+      tasks:(sl.tasks||[]).length,
+      shortTasks:(sl.shortTasks||[]).length,
+      subTasks:(sl.subTasks||[]).length,
+      activities:(sl.activities||[]).length,
+      dimensions:(sl.dimensions||[]).length,
+      reports:(sl.reports||[]).length,
+      workstreams:(sl.workstreams||[]).length,
+      chains:(sl.chains||[]).length,
+      customColumns:(sl.customColumns||[]).length,
+      fullKits:(sl.fullKits||[]).length
+    },
+    steps,
+    locations,
+    customColumns: uniqueCustomCols.slice(0,12),
+    workstreams,
+    categoryPhaseTasks: categories
+      .filter(category=>category.phaseTasks && Object.keys(category.phaseTasks).length)
+      .map(category=>({
+        name: category.name,
+        phases: Object.values(category.phaseTasks).map(task=>task.phaseName || task.label).filter(Boolean)
+      }))
+  };
+}
+function mergeImportedProject(target, imported){
+  const keepLabels = splitLabels(target.labels).length ? target.labels : imported.labels;
+  const keepCheckout = normalizePlanStatus(target.planStatus)==='Checked Out';
+  Object.assign(target,{
+    code: imported.code || target.code,
+    projectNumber: imported.projectNumber || target.projectNumber,
+    projectName: imported.projectName || target.projectName,
+    client: imported.client || target.client,
+    importedName: imported.importedName || target.importedName,
+    division: imported.division || target.division,
+    pm: imported.pm || target.pm,
+    labels: splitLabels(keepLabels),
+    state: imported.state || target.state,
+    planStatus: keepCheckout ? target.planStatus : (imported.planStatus || target.planStatus),
+    startDate: imported.startDate || target.startDate,
+    dueDate: imported.dueDate || target.dueDate,
+    projectedDate: imported.projectedDate || target.projectedDate,
+    plannedEnd: imported.plannedEnd || target.plannedEnd,
+    phases: imported.phases?.length ? imported.phases : target.phases,
+    categories: imported.categories?.length ? imported.categories : target.categories,
+    components: imported.components || target.components || {},
+    slDetails: imported.slDetails || target.slDetails || null,
+    lastImportedFile: imported.lastImportedFile || target.lastImportedFile,
+    lastImportedAt: imported.lastImportedAt || target.lastImportedAt,
+    progress: Number.isFinite(Number(imported.progress)) ? Number(imported.progress) : target.progress
+  });
+  target.checkoutDraft = normalizePlanStatus(target.planStatus)==='Checked Out' ? normalizeCheckoutDraft(null, target) : null;
+  return target;
+}
+function findMatchingProject(imported){
+  return APP.find(project=>
+    String(project.id)===String(imported.id) ||
+    (getProjectNumber(project) && imported.projectNumber && getProjectNumber(project)===imported.projectNumber) ||
+    (trimOrBlank(project.projectName).toLowerCase() && trimOrBlank(project.projectName).toLowerCase()===trimOrBlank(imported.projectName).toLowerCase())
+  );
+}
+function hydrateEmbeddedSLImports(){
+  const embedded = Array.isArray(window.YD_EMBEDDED_SL_IMPORTS) ? window.YD_EMBEDDED_SL_IMPORTS : [];
+  let changed = false;
+  embedded.forEach((item, idx)=>{
+    const imported = normalizeProject(item, item.seedOrder ?? idx);
+    const target = APP.find(project=>String(project.id)===String(imported.id) || (getProjectNumber(project) && imported.projectNumber && getProjectNumber(project)===imported.projectNumber));
+    if(target){
+      mergeImportedProject(target, imported);
+      changed = true;
+    }else{
+      APP.push(imported);
+      changed = true;
+    }
+  });
+  if(changed) saveData();
+}
+function triggerSLProjectImport(projectId){
+  const input=document.getElementById('slProjectInput');
+  if(!input) return;
+  input.value='';
+  input.dataset.targetProjectId=projectId!=null?String(projectId):'';
+  input.click();
+}
+function renderWorkspaceContext(){
+  const actions=document.getElementById('workspaceHeadActions');
+  const panel=document.getElementById('slSummaryPanel');
+  if(!actions || !panel) return;
+  if(!currentProject){
+    actions.innerHTML='';
+    panel.style.display='none';
+    panel.innerHTML='';
+    return;
+  }
+  const checkedOut=normalizePlanStatus(currentProject.planStatus)==='Checked Out';
+  actions.innerHTML=checkedOut
+    ? `<span class="plan-pill ${getPlanClass(currentProject.planStatus)}">${esc(normalizePlanStatus(currentProject.planStatus))}</span><button class="btn-yd table-btn" onclick="checkInProject(${currentProject.id})"><i class="fa fa-check me-1"></i>Check In</button><button class="btn-outline-yd table-btn" onclick="triggerSLProjectImport(${currentProject.id})"><i class="fa fa-file-import me-1"></i>Import .sl</button><button class="btn-outline-yd table-btn" style="border-color:var(--yd-red);color:var(--yd-red)" onclick="undoCheckout(${currentProject.id})"><i class="fa fa-rotate-left me-1"></i>Undo</button>`
+    : `<span class="plan-pill ${getPlanClass(currentProject.planStatus)}">${esc(normalizePlanStatus(currentProject.planStatus))}</span><button class="btn-yd table-btn" onclick="beginCheckout(${currentProject.id})"><i class="fa fa-lock-open me-1"></i>Check Out</button>`;
+  const details=currentProject.slDetails;
+  if(!details){
+    panel.style.display='none';
+    panel.innerHTML='';
+    return;
+  }
+  panel.style.display='block';
+  const meta=details.projectMeta||{};
+  const counts=details.counts||{};
+  const phaseChips=(details.phaseDefs||[]).map(phase=>`<span class="sl-chip">${esc(phase.name)}${phase.start||phase.end?` ${esc([phase.start,phase.end].filter(Boolean).join(' to '))}`:''}</span>`).join('');
+  const scopeChips=(details.scopeNames||[]).slice(0,8).map(name=>`<span class="sl-chip">${esc(name)}</span>`).join('');
+  const stepChips=(details.steps||[]).slice(0,8).map(name=>`<span class="sl-chip">${esc(name)}</span>`).join('');
+  const locationChips=(details.locations||[]).slice(0,4).map(name=>`<span class="sl-chip">${esc(name)}</span>`).join('');
+  const colChips=(details.customColumns||[]).slice(0,8).map(name=>`<span class="sl-chip">${esc(name)}</span>`).join('');
+  const workstreams=(details.workstreams||[]).map(item=>`<span class="sl-chip">WS ${esc(item.id)}${item.projectedEnd?` • ${esc(item.projectedEnd)}`:''}${item.delayDays!=null?` • ${item.delayDays}d` : ''}</span>`).join('');
+  const categoryTasks=(details.categoryPhaseTasks||[]).map(item=>`<span class="sl-chip">${esc(item.name)}: ${esc((item.phases||[]).join(', '))}</span>`).join('');
+  panel.innerHTML=`
+    <div class="sl-summary-top">
+      <div>
+        <div style="font-family:'Nunito',sans-serif;font-weight:900;color:var(--yd-primary);font-size:.95rem">Imported .sl Snapshot</div>
+        <div style="font-size:.78rem;color:#6b7785;margin-top:4px">${esc(details.sourceFile || 'Imported file')}${details.importedAt?` • Synced ${esc(formatDateForDisplay(isoFromSL(details.importedAt)))}`:''}</div>
+      </div>
+      <div class="sl-chip-list">
+        ${meta.manager?`<span class="sl-chip">Manager: ${esc(meta.manager)}</span>`:''}
+        ${meta.state?`<span class="sl-chip">State: ${esc(meta.state)}</span>`:''}
+        ${meta.status?`<span class="sl-chip">Status: ${esc(meta.status)}</span>`:''}
+        ${meta.actualStart?`<span class="sl-chip">Actual Start: ${esc(meta.actualStart)}</span>`:''}
+      </div>
+    </div>
+    <div class="sl-summary-grid">
+      <div class="sl-mini-card">
+        <h6>Planning Team</h6>
+        <p>Planners: ${esc((meta.planners||[]).join(', ') || '—')}</p>
+        <p>Additional Managers: ${esc((meta.addlManagers||[]).join(', ') || '—')}</p>
+        <p>Dashboard Access: ${esc((meta.dashboardPrivilege||[]).join(', ') || '—')}</p>
+      </div>
+      <div class="sl-mini-card">
+        <h6>Counts</h6>
+        <div class="sl-kpi-list">
+          <div class="sl-kpi"><b>${counts.tasks||0}</b><span>Tasks</span></div>
+          <div class="sl-kpi"><b>${counts.subTasks||0}</b><span>Subtasks</span></div>
+          <div class="sl-kpi"><b>${counts.activities||0}</b><span>Activities</span></div>
+          <div class="sl-kpi"><b>${counts.reports||0}</b><span>Reports</span></div>
+          <div class="sl-kpi"><b>${counts.workstreams||0}</b><span>Workstreams</span></div>
+          <div class="sl-kpi"><b>${counts.fullKits||0}</b><span>Full Kits</span></div>
+        </div>
+      </div>
+      <div class="sl-mini-card">
+        <h6>Phases & Categories</h6>
+        <div class="sl-chip-list">${phaseChips || '<span class="sl-chip">No phases</span>'}</div>
+        <div class="sl-chip-list" style="margin-top:8px">${scopeChips || '<span class="sl-chip">No named scopes</span>'}</div>
+      </div>
+      <div class="sl-mini-card">
+        <h6>Operational Details</h6>
+        <div class="sl-chip-list">${stepChips || '<span class="sl-chip">No steps</span>'}</div>
+        <div class="sl-chip-list" style="margin-top:8px">${locationChips || '<span class="sl-chip">No locations</span>'}</div>
+        <div class="sl-chip-list" style="margin-top:8px">${colChips || '<span class="sl-chip">No custom columns</span>'}</div>
+      </div>
+      <div class="sl-mini-card">
+        <h6>Workstream Outlook</h6>
+        <div class="sl-chip-list">${workstreams || '<span class="sl-chip">No workstreams</span>'}</div>
+      </div>
+      <div class="sl-mini-card">
+        <h6>Category-Level Tasks</h6>
+        <div class="sl-chip-list">${categoryTasks || '<span class="sl-chip">No category-only tasks</span>'}</div>
+      </div>
+    </div>`;
+}
+
+hydrateEmbeddedSLImports();
+
+// ============================================================
+// .SL IMPORT
+// ============================================================
+function importSL(evt){
+  const file = evt.target.files[0];
+  if(!file) return;
+  const targetProjectId = trimOrBlank(evt.target.dataset.targetProjectId);
+  const toast = Swal.mixin({toast:true,position:'top-end',showConfirmButton:false,timer:2000});
+  toast.fire({icon:'info',title:'Reading .sl file…'});
+
+  const reader = new FileReader();
+  reader.onload = async (e)=>{
+    try{
+      // .sl is gzip — decompress via DecompressionStream if available, else try as raw JSON
+      const ab = e.target.result;
+      let jsonText;
+      try{
+        const ds = new DecompressionStream('gzip');
+        const writer = ds.writable.getWriter();
+        const reader2 = ds.readable.getReader();
+        writer.write(new Uint8Array(ab));
+        writer.close();
+        const chunks = [];
+        let done=false;
+        while(!done){ const {value,done:d} = await reader2.read(); if(value) chunks.push(value); done=d; }
+        const full = new Uint8Array(chunks.reduce((a,b)=>a+b.length,0));
+        let off=0; for(const c of chunks){full.set(c,off);off+=c.length;}
+        jsonText = new TextDecoder().decode(full);
+      }catch(_){
+        jsonText = new TextDecoder().decode(ab);
+      }
+      const sl = JSON.parse(jsonText);
+      const imported = parseSL(sl, file.name);
+      if(imported){
+        let targetProject = targetProjectId ? APP.find(project=>String(project.id)===targetProjectId) : findMatchingProject(imported);
+        if(targetProject){
+          mergeImportedProject(targetProject, normalizeProject(imported, targetProject.seedOrder ?? APP.length));
+          if(currentProject && currentProject.id===targetProject.id){
+            currentProject=targetProject;
+            document.getElementById('wsTitle').textContent=getWorkspaceTitle(currentProject);
+            calcProjectEnd();
+            renderPert();
+            if(document.getElementById('tabularView')?.style.display!=='none') renderTabular();
+            if(document.getElementById('compView')?.style.display!=='none') initCompView();
+            renderWorkspaceContext();
+          }
+        }else{
+          APP.push(normalizeProject(imported, APP.length));
+        }
+        saveData();
+        renderDashboard();
+        Swal.fire({icon:'success',title:'Project Imported!',text:`"${imported.projectName || imported.code}" synced from .sl file.`,timer:3000,showConfirmButton:false});
+      }
+    }catch(err){
+      console.error(err);
+      Swal.fire({icon:'error',title:'Import Failed',text:'Could not parse .sl file. '+err.message});
+    }
+    delete evt.target.dataset.targetProjectId;
+    evt.target.value='';
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function parseSL(sl, filename){
+  const proj = sl.project || {};
+  const shortProj = sl.shortProject || {};
+  const tasks = sl.tasks || [];
+  const subTasks = sl.subTasks || [];
+  const content = proj.content || {};
+  const slPhases = content.phases || [];
+  const scopes = content.scopes || [];
+  const phaseDefs = slPhases.filter(phase=>!(phase.name||'').includes('project_end'));
+  const phaseIdToIndex = new Map();
+  const phases = phaseDefs.map((phase, idx)=>{
+    phaseIdToIndex.set(phase.id, idx);
+    return phaseNameFromSL(phase.name);
+  });
+
+  const nameParts = filename.replace('.sl','').split('_');
+  const projName = shortProj.name || nameParts.slice(0,4).join(' ').replace(/_/g,' ');
+  const projectNumber = extractProjectNumber(projName, shortProj.id || '');
+  const scopeMap={};
+  scopes.forEach(scope=>{ if(trimOrBlank(scope.name)) scopeMap[String(scope.id)] = trimOrBlank(scope.name); });
+  const taskAssignments={};
+  (shortProj.tasks||[]).forEach(task=>{ taskAssignments[task.id]=task; });
+  const phaseTaskRefs={};
+  const catMap={};
+  const categoryOrder = scopes.filter(scope=>trimOrBlank(scope.name)).map(scope=>trimOrBlank(scope.name));
+  const getCategory=(label)=>{
+    const key=trimOrBlank(label);
+    if(!catMap[key]) catMap[key]={id:`cat-${key.replace(/[^a-z0-9]+/gi,'-').toLowerCase()||Date.now()}`,name:key||'Uncategorized',assemblies:[],phaseTasks:{},_asmByName:{}};
+    return catMap[key];
+  };
+  const getAssembly=(category, name)=>{
+    const key=trimOrBlank(name);
+    if(!category._asmByName[key]){
+      const asm={id:`asm-${category.id}-${key.replace(/[^a-z0-9]+/gi,'-').toLowerCase()||Date.now()}`,name:key||'Unnamed Assembly',subtasks:{},dates:{}};
+      category._asmByName[key]=asm;
+      category.assemblies.push(asm);
+    }
+    return category._asmByName[key];
+  };
+
+  tasks.forEach(task=>{
+    const c = task.content || {};
+    if(c.type !== 'TASK') return;
+    const rawName = trimOrBlank(c.name);
+    if(!rawName || rawName.startsWith('Buffer(')) return;
+    const parts = rawName.split(' - ').map(part=>part.trim()).filter(Boolean);
+    const catLabel = parts[0] || scopeMap[String(c.Y)] || `Category ${c.Y || 0}`;
+    const phaseIndex = phaseIdToIndex.has(c.phase) ? phaseIdToIndex.get(c.phase) : phases.findIndex(phase=>phase===phaseNameFromSL(parts[parts.length-1] || ''));
+    if(phaseIndex<0) return;
+    const taskMeta={
+      id: task.id,
+      rawName,
+      phaseIndex,
+      phaseName: phases[phaseIndex],
+      days: daysFromMs(c.duration),
+      start: isoFromSL(c.suggestedStart || c.plannedStart),
+      end: isoFromSL(c.suggestedEnd || c.plannedEnd),
+      plannedStart: isoFromSL(c.plannedStart),
+      plannedEnd: isoFromSL(c.plannedEnd),
+      suggestedStart: isoFromSL(c.suggestedStart),
+      suggestedEnd: isoFromSL(c.suggestedEnd),
+      actualStart: isoFromSL(c.actualStart),
+      actualEnd: isoFromSL(c.actualEnd),
+      dueDate: isoFromSL(c.dueDate),
+      manager: trimOrBlank(c.manager || taskAssignments[task.id]?.manager),
+      planner: trimOrBlank(c.planner ?? taskAssignments[task.id]?.planner),
+      status: trimOrBlank(c.status),
+      ready: !!c.ready,
+      y: c.Y || 0
+    };
+    if(parts.length>=3){
+      const asmName = parts.slice(1,-1).join(' - ');
+      const category=getCategory(catLabel);
+      const asm=getAssembly(category, asmName);
+      asm.dates[phaseIndex]={...taskMeta};
+      phaseTaskRefs[task.id]={categoryName:category.name,assemblyName:asm.name,asmId:asm.id,phaseIndex};
+    }else{
+      const category=getCategory(catLabel);
+      category.phaseTasks[phaseIndex]={...taskMeta,label:parts[1] || phases[phaseIndex],subtasks:[]};
+      phaseTaskRefs[task.id]={categoryName:category.name,phaseIndex,categoryTask:true};
+    }
+  });
+
+  subTasks.forEach(subTask=>{
+    const c=subTask.content || {};
+    const ref=phaseTaskRefs[subTask.parent];
+    if(!ref || !trimOrBlank(c.name)) return;
+    const subMeta={
+      id:`sub-${subTask.id}`,
+      name:trimOrBlank(c.name),
+      status:trimOrBlank(c.status),
+      ready:!!c.ready,
+      days:daysFromMs(c.duration),
+      start:isoFromSL(c.suggestedStart || c.plannedStart),
+      end:isoFromSL(c.suggestedEnd || c.plannedEnd),
+      plannedStart:isoFromSL(c.plannedStart),
+      plannedEnd:isoFromSL(c.plannedEnd),
+      actualStart:isoFromSL(c.actualStart),
+      actualEnd:isoFromSL(c.actualEnd),
+      manager:trimOrBlank(c.manager),
+      sourceId:subTask.id
+    };
+    const category=catMap[ref.categoryName];
+    if(!category) return;
+    if(ref.categoryTask){
+      if(category.phaseTasks[ref.phaseIndex]){
+        category.phaseTasks[ref.phaseIndex].subtasks=(category.phaseTasks[ref.phaseIndex].subtasks||[]);
+        category.phaseTasks[ref.phaseIndex].subtasks.push(subMeta);
+      }
+      return;
+    }
+    const asm=category._asmByName[ref.assemblyName];
+    if(!asm) return;
+    if(!asm.subtasks[ref.phaseIndex]) asm.subtasks[ref.phaseIndex]=[];
+    asm.subtasks[ref.phaseIndex].push(subMeta);
+  });
+
+  const categories=Object.values(catMap)
+    .sort((a,b)=>{
+      const ai=categoryOrder.indexOf(a.name);
+      const bi=categoryOrder.indexOf(b.name);
+      return (ai<0?999:ai)-(bi<0?999:bi) || a.name.localeCompare(b.name);
+    })
+    .map(category=>{
+      const cleanAssemblies=category.assemblies.sort((a,b)=>a.name.localeCompare(b.name));
+      return {id:category.id,name:category.name,assemblies:cleanAssemblies,phaseTasks:category.phaseTasks};
+    });
+  const components={};
+  categories.forEach(category=>category.assemblies.forEach(asm=>{ components[asm.id]=[]; }));
+  const projectEndTask = tasks.find(task=>(task.content||{}).type==='PE');
+  const startDate = isoFromSL(content.actualStart || phaseDefs[0]?.startDate || new Date().toISOString());
+  const dueDate = isoFromSL(projectEndTask?.content?.dueDate || phaseDefs[phaseDefs.length-1]?.endDate);
+  const plannedEnd = isoFromSL(projectEndTask?.content?.plannedEnd);
+  const projectedDate = isoFromSL(projectEndTask?.content?.suggestedEnd);
+  const taskStatuses = tasks.filter(task=>(task.content||{}).type==='TASK').map(task=>trimOrBlank(task.content?.status));
+  const progress = taskStatuses.length ? Math.round((taskStatuses.filter(status=>status==='CO').length + taskStatuses.filter(status=>status==='IP').length*0.5) / taskStatuses.length * 100) : progressFromState(shortProj.state || content.state);
+  const detailSummary = buildSLDetailSummary(sl, filename, shortProj, content, phaseDefs, scopes, categories);
+
+  const imported={
+    id: shortProj.id || Date.now(),
+    code: projectNumber || projName.replace(/\s+/g,'-').replace(/--+/g,'-').slice(0,30) || 'IMPORTED',
+    projectNumber,
+    projectName: projName,
+    client: projName,
+    site:'',
+    machine: extractProjectLabel(projName),
+    pm: trimOrBlank(shortProj.manager),
+    division: trimOrBlank(shortProj.division || 'DEFAULT'),
+    labels: extractProjectLabel(projName),
+    state: trimOrBlank(shortProj.state || content.state || 'In Process'),
+    planStatus: trimOrBlank(shortProj.status || 'Checked In'),
+    dueDate,
+    projectedDate,
+    plannedEnd,
+    poValue:0,
+    progress,
+    phases,
+    categories,
+    components,
+    startDate,
+    importedName: projName,
+    slDetails: detailSummary,
+    lastImportedFile: filename,
+    lastImportedAt: detailSummary.importedAt
+  };
+
+  return imported;
+}
+
+// ============================================================
+// ROLE
+// ============================================================
+function setRole(r,label){ currentRole=r; document.getElementById('roleLbl').textContent=label; if(currentProject) renderCompSheet(); }
+
+// ============================================================
+// DASHBOARD
+// ============================================================
+function showDashboard(){
+  document.getElementById('dashView').style.display='';
+  document.getElementById('workspaceView').style.display='none';
+  currentProject=null;
+  renderDashboard();
+}
+
+function renderDashboard(){
+  const grid=document.getElementById('projectGrid');
+  grid.innerHTML='';
+  APP.forEach(p=>{
+    const end=new Date(p.dueDate);
+    const dl=Math.round((end-new Date())/86400000);
+    const dc=dl<30?'#dc3545':dl<60?'#ffc107':'#198754';
+    const catCount=p.categories.length;
+    const asmCount=p.categories.reduce((s,c)=>s+c.assemblies.length,0);
+    grid.innerHTML+=`
+    <div class="project-card ${p.progress>50?'active-card':''}" style="position:relative">
+      <div style="position:absolute;top:8px;right:8px;display:flex;gap:4px">
+        <button class="btn-sm-icon" title="Open" onclick="openProject(${p.id})"><i class="fa fa-folder-open" style="color:var(--yd-primary)"></i></button>
+        <button class="btn-sm-icon" title="Delete" onclick="deleteProject(${p.id},event)"><i class="fa fa-trash" style="color:var(--yd-red)"></i></button>
+      </div>
+      <div class="proj-code" onclick="openProject(${p.id})" style="padding-right:60px">${p.code}</div>
+      <div style="font-size:.85rem;color:#555;margin-top:2px" onclick="openProject(${p.id})"><i class="fa fa-building me-1"></i>${p.client}${p.site?' — '+p.site:''}</div>
+      ${p.pm?`<div style="font-size:.78rem;color:#888;margin-top:2px"><i class="fa fa-hard-hat me-1"></i>${p.pm}</div>`:''}
+      ${p.machine?`<div style="font-size:.78rem;color:#888"><i class="fa fa-cog me-1"></i>${p.machine}</div>`:''}
+      <div style="font-size:.78rem;color:#888;margin-top:4px"><i class="fa fa-layer-group me-1"></i>${catCount} categories, ${asmCount} assemblies</div>
+      <div style="margin-top:6px;display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:.72rem;font-weight:700;color:${dc};background:${dc}18;padding:2px 8px;border-radius:10px">${dl>0?dl+'d left':'Overdue'}</span>
+        ${p.poValue?`<span style="font-size:.72rem;color:#888">₹${(p.poValue/100000).toFixed(1)}L</span>`:''}
+      </div>
+      <div class="proj-progress"><div class="proj-progress-fill" style="width:${p.progress}%"></div></div>
+      <div style="font-size:.7rem;color:#888;text-align:right;margin-top:2px">${p.progress}% complete</div>
+    </div>`;
+  });
+  if(!APP.length) grid.innerHTML='<div style="text-align:center;padding:60px;color:#aaa;grid-column:1/-1"><i class="fa fa-folder-open" style="font-size:3rem;margin-bottom:12px;display:block"></i><div style="font-weight:700">No projects yet</div><div style="font-size:.85rem">Import a .sl file or create a new project</div></div>';
+}
+
+function deleteProject(id,evt){
+  evt.stopPropagation();
+  const p=APP.find(x=>x.id===id);
+  Swal.fire({title:`Delete "${p.code}"?`,text:'This cannot be undone.',icon:'warning',showCancelButton:true,confirmButtonColor:'#dc3545',confirmButtonText:'Delete'}).then(r=>{
+    if(r.isConfirmed){ APP=APP.filter(x=>x.id!==id); saveData(); renderDashboard(); Swal.fire({toast:true,icon:'success',title:'Project deleted',position:'top-end',timer:2000,showConfirmButton:false}); }
+  });
+}
+
+function openProject(id){
+  currentProject=APP.find(p=>p.id===id);
+  document.getElementById('dashView').style.display='none';
+  document.getElementById('workspaceView').style.display='';
+  document.getElementById('wsTitle').textContent=currentProject.code+(currentProject.client?' — '+currentProject.client:'');
+  calcProjectEnd();
+  renderPert();
+  document.querySelectorAll('.ws-tab').forEach((t,i)=>t.classList.toggle('active',i===0));
+  document.getElementById('pertView').style.display='';
+  document.getElementById('tabularView').style.display='none';
+  document.getElementById('compView').style.display='none';
+}
+
+// ============================================================
+// PROJECT END DATE (from days)
+// ============================================================
+function calcProjectEnd(){
+  const p=currentProject;
+  // Find project start date
+  const startStr = p.startDate || new Date().toISOString().split('T')[0];
+  const start = new Date(startStr);
+  let maxDays=0;
+  p.categories.forEach(cat=>{
+    cat.assemblies.forEach(asm=>{
+      // For each row, sum all phase days (sequential assumption) or find max
+      let rowDays=0;
+      Object.values(asm.dates).forEach(d=>{
+        if(d){
+          if(d.days) rowDays+=Number(d.days);
+          else if(d.start && d.end) rowDays+=Math.round((new Date(d.end)-new Date(d.start))/86400000);
+        }
+      });
+      if(rowDays>maxDays) maxDays=rowDays;
+    });
+  });
+  const end=new Date(start);
+  end.setDate(end.getDate()+maxDays);
+  document.getElementById('wsEndDate').innerHTML=`<i class="fa fa-flag-checkered me-1"></i>Est. End: ${end.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})} (${maxDays}d)`;
+}
+
+function renderDashboard(){
+  const grid=document.getElementById('projectGrid');
+  if(!grid) return;
+  renderSummary();
+  const projects=getDashboardProjects();
+  if(!projects.length){
+    grid.innerHTML='<div class="empty-table"><i class="fa fa-folder-open" style="font-size:2.3rem;margin-bottom:10px;display:block"></i><div>No projects match the current filters.</div></div>';
+    return;
+  }
+  grid.innerHTML=`
+    <table class="project-list">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Project No.</th>
+          <th>Project</th>
+          <th>Manager</th>
+          <th>Labels</th>
+          <th>State</th>
+          <th>Plan Status</th>
+          <th>Start Date</th>
+          <th>Due Date</th>
+          <th>Projected Date</th>
+          <th>Planned End</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${projects.map(project=>{
+          const view=getProjectView(project);
+          const editable=normalizePlanStatus(project.planStatus)==='Checked Out';
+          const labels=splitLabels(view.labels);
+          const catCount=(project.categories||[]).length;
+          const asmCount=(project.categories||[]).reduce((sum,cat)=>sum+(cat.assemblies?.length||0),0);
+          return `
+            <tr>
+              <td>
+                <div class="project-id-badge">#${esc(project.id)}</div>
+                ${project.rowIndex?`<div class="project-index-chip">Idx ${esc(project.rowIndex)}</div>`:''}
+              </td>
+              <td>
+                <div class="meta-stack">
+                  <div style="font-weight:800;color:var(--yd-primary)">${esc(getProjectNumber(project)||'—')}</div>
+                  <div class="project-subtext">${esc(getProjectDivision(project))}</div>
+                </div>
+              </td>
+              <td>
+                ${editable ? `<input class="meta-input" value="${esc(view.projectName)}" onchange="updateProjectDraft(${project.id},'projectName',this.value)">` : `<div class="project-title-text">${esc(view.projectName)}</div>`}
+                <div class="project-subtext">${catCount} categories, ${asmCount} assemblies</div>
+              </td>
+              <td><input class="meta-input" value="${esc(view.pm)}" onchange="updateProjectDraft(${project.id},'pm',this.value)" ${editable?'':'disabled'}></td>
+              <td>
+                ${editable ? `<input class="meta-input" value="${esc(view.labels)}" onchange="updateProjectDraft(${project.id},'labels',this.value)" placeholder="Comma-separated labels">` : (labels.length ? `<div class="label-stack">${labels.map(label=>`<span class="label-chip">${esc(label)}</span>`).join('')}</div>` : '<span style="color:#98a2ad">—</span>')}
+              </td>
+              <td>
+                ${editable ? `<select class="meta-select" onchange="updateProjectDraft(${project.id},'state',this.value)">${META_STATE_OPTIONS.map(state=>`<option value="${state}" ${normalizeState(view.state)===state?'selected':''}>${state}</option>`).join('')}</select>` : `<span class="state-pill ${getStateClass(view.state)}">${esc(normalizeState(view.state))}</span>`}
+              </td>
+              <td>
+                <span class="plan-pill ${getPlanClass(project.planStatus)}">${esc(normalizePlanStatus(project.planStatus))}</span>
+                <div class="plan-note">${normalizePlanStatus(project.planStatus)==='Checked Out' ? `Locked by ${esc(project.checkoutLockedBy || 'team member')}` : 'Ready for check out'}</div>
+              </td>
+              <td>${editable ? `<input type="date" class="meta-input" value="${esc(view.startDate)}" onchange="updateProjectDraft(${project.id},'startDate',this.value)">` : `<span class="date-badge">${formatDateForDisplay(view.startDate)}</span>`}</td>
+              <td>${editable ? `<input type="date" class="meta-input" value="${esc(view.dueDate)}" onchange="updateProjectDraft(${project.id},'dueDate',this.value)">` : `<span class="date-badge">${formatDateForDisplay(view.dueDate)}</span>`}</td>
+              <td>${editable ? `<input type="date" class="meta-input" value="${esc(view.projectedDate)}" onchange="updateProjectDraft(${project.id},'projectedDate',this.value)">` : `<span class="date-badge">${formatDateForDisplay(view.projectedDate)}</span>`}</td>
+              <td>${editable ? `<input type="date" class="meta-input" value="${esc(view.plannedEnd)}" onchange="updateProjectDraft(${project.id},'plannedEnd',this.value)">` : `<span class="date-badge">${formatDateForDisplay(view.plannedEnd)}</span>`}</td>
+              <td>
+                <div class="action-stack">
+                  ${editable
+                    ? `<button class="btn-yd table-btn" onclick="checkInProject(${project.id})"><i class="fa fa-check me-1"></i>Check In</button><button class="btn-outline-yd table-btn icon-action" title="Open Project" onclick="openProject(${project.id})"><i class="fa fa-folder-open"></i></button><button class="btn-outline-yd table-btn icon-action" title="Import .sl" onclick="triggerSLProjectImport(${project.id})"><i class="fa fa-file-import"></i></button><button class="btn-outline-yd table-btn" style="border-color:var(--yd-red);color:var(--yd-red)" onclick="undoCheckout(${project.id})"><i class="fa fa-rotate-left me-1"></i>Undo</button>`
+                    : `<button class="btn-yd table-btn" onclick="beginCheckout(${project.id})"><i class="fa fa-lock-open me-1"></i>Check Out</button><button class="btn-outline-yd table-btn icon-action" title="Open Project" onclick="openProject(${project.id})"><i class="fa fa-folder-open"></i></button>`}
+                  <button class="btn-outline-yd table-btn" style="border-color:var(--yd-red);color:var(--yd-red)" onclick="deleteProject(${project.id},event)"><i class="fa fa-trash me-1"></i>Delete</button>
+                </div>
+              </td>
+            </tr>`;
+        }).join('')}
+      </tbody>
+    </table>`;
+}
+
+function deleteProject(id,evt){
+  if(evt) evt.stopPropagation();
+  const project=APP.find(item=>item.id===id);
+  if(!project) return;
+  Swal.fire({title:`Delete "${getProjectNumber(project)||project.code}"?`,text:'This cannot be undone.',icon:'warning',showCancelButton:true,confirmButtonColor:'#dc3545',confirmButtonText:'Delete'}).then(r=>{
+    if(r.isConfirmed){
+      APP=APP.filter(item=>item.id!==id);
+      if(currentProject && currentProject.id===id) currentProject=null;
+      saveData();
+      renderDashboard();
+      Swal.fire({toast:true,icon:'success',title:'Project deleted',position:'top-end',timer:2000,showConfirmButton:false});
+    }
+  });
+}
+
+function openProject(id){
+  currentProject=APP.find(project=>project.id===id);
+  if(!currentProject) return;
+  document.getElementById('dashView').style.display='none';
+  document.getElementById('workspaceView').style.display='';
+  document.getElementById('wsTitle').textContent=getWorkspaceTitle(currentProject);
+  calcProjectEnd();
+  renderWorkspaceContext();
+  renderPert();
+  document.querySelectorAll('.ws-tab').forEach((tab,idx)=>tab.classList.toggle('active',idx===0));
+  document.getElementById('pertView').style.display='';
+  document.getElementById('tabularView').style.display='none';
+  document.getElementById('compView').style.display='none';
+}
+
+function calcProjectEnd(){
+  const project=currentProject;
+  if(!project) return;
+  const startStr = project.startDate || new Date().toISOString().split('T')[0];
+  const start = new Date(startStr);
+  let maxDays=0;
+  project.categories.forEach(cat=>{
+    cat.assemblies.forEach(asm=>{
+      let rowDays=0;
+      Object.values(asm.dates).forEach(d=>{
+        if(d){
+          if(d.days) rowDays+=Number(d.days);
+          else if(d.start && d.end) rowDays+=Math.round((new Date(d.end)-new Date(d.start))/86400000);
+        }
+      });
+      if(rowDays>maxDays) maxDays=rowDays;
+    });
+  });
+  if(!maxDays){
+    const fallback=project.plannedEnd || project.projectedDate || project.dueDate || project.startDate;
+    document.getElementById('wsEndDate').innerHTML=`<i class="fa fa-flag-checkered me-1"></i>${fallback?`Planned End: ${formatDateForDisplay(fallback)}`:'Planned End: —'}`;
+    return;
+  }
+  const end=new Date(start);
+  end.setDate(end.getDate()+maxDays);
+  document.getElementById('wsEndDate').innerHTML=`<i class="fa fa-flag-checkered me-1"></i>Est. End: ${end.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})} (${maxDays}d)`;
+}
+
+function getPhaseStart(p,catIdx,asmIdx,phaseIdx){
+  // Calculate start of a phase = project start + sum of previous phases days
+  const startStr = p.startDate || new Date().toISOString().split('T')[0];
+  const start = new Date(startStr);
+  const asm = p.categories[catIdx].assemblies[asmIdx];
+  let runDays=0;
+  for(let pi=0;pi<phaseIdx;pi++){
+    const d=asm.dates[pi];
+    if(d){ if(d.days) runDays+=Number(d.days); else if(d.start&&d.end) runDays+=Math.round((new Date(d.end)-new Date(d.start))/86400000); }
+  }
+  const s=new Date(start); s.setDate(s.getDate()+runDays);
+  return s;
+}
+
+// ============================================================
+// TABS
+// ============================================================
+function switchTab(tab,el){
+  document.querySelectorAll('.ws-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('pertView').style.display=tab==='pert'?'':'none';
+  document.getElementById('tabularView').style.display=tab==='tabular'?'':'none';
+  document.getElementById('compView').style.display=tab==='comp'?'':'none';
+  if(tab==='tabular') renderTabular();
+  if(tab==='comp') initCompView();
+}
+
+// ============================================================
+// PERT CHART
+// ============================================================
+function renderPert(){
+  if(!currentProject) return;
+  const p=currentProject;
+  const phases=p.phases;
+  const table=document.getElementById('pertTable');
+  table.innerHTML='';
+
+  // Update paste category select
+  const sel=document.getElementById('pertPasteCat');
+  sel.innerHTML='';
+  p.categories.forEach((cat,ci)=>{ sel.innerHTML+=`<option value="${ci}">${cat.name}</option>`; });
+
+  let hdr='<thead><tr>';
+  hdr+=`<th class="cat-header" colspan="2" style="min-width:260px">Category / Assembly</th>`;
+  phases.forEach((ph,pi)=>{
+    hdr+=`<th class="phase-header" style="cursor:pointer" title="Click name to rename">
+      <input class="phase-name-input" value="${ph}" onblur="commitPhaseRename(${pi},this)" onclick="event.stopPropagation()" readonly onkeydown="if(event.key==='Enter')this.blur()">
+      <button onclick="deletePhase(${pi})" style="position:absolute;top:2px;right:2px;background:none;border:none;color:rgba(255,255,255,.5);font-size:.65rem;cursor:pointer" title="Delete phase">✕</button>
+    </th>`;
+  });
+  hdr+=`<th style="background:#f0f4f8;min-width:80px"><button class="add-col-btn w-100 h-100 border-0" onclick="addPhase()"><i class="fa fa-plus me-1"></i>Phase</button></th>`;
+  hdr+='</tr></thead>';
+
+  let body='<tbody>';
+  p.categories.forEach((cat,ci)=>{
+    const rowSpan=cat.assemblies.length+1; // +1 for add-assembly row
+    cat.assemblies.forEach((asm,ai)=>{
+      body+=`<tr>`;
+      if(ai===0){
+        body+=`<td class="cat-cell" rowspan="${rowSpan}" style="min-width:70px;writing-mode:vertical-rl;transform:rotate(180deg);text-align:center" onclick="renameCat(${ci},this)">${cat.name}</td>`;
+      }
+      body+=`<td class="assembly-label" onclick="renameAsm(${ci},${ai},this)" title="Click to rename">${asm.name}</td>`;
+      phases.forEach((_,pi)=>{
+        const d=asm.dates[pi];
+        let bar='';
+        if(d){
+          const days=d.days||'';
+          const label=days?`${days}d`:(d.start&&d.end?`${d.start.slice(5)}→${d.end.slice(5)}`:'set');
+          const meta=[label,d.manager?`Mgr: ${d.manager}`:'',d.planner?`Planner: ${d.planner}`:'',d.status?`Status: ${d.status}`:''].filter(Boolean).join(' | ');
+          bar=`<div class="pert-bar ${phaseClasses[pi%phaseClasses.length]}" title="${escAttr(meta)}">${label}</div>`;
+        }
+        body+=`<td class="pert-bar-cell" onclick="openPertCell(${ci},${ai},${pi})">${bar||'<span style="font-size:.68rem;color:#ccc;padding-left:8px">click to set</span>'}</td>`;
+      });
+      body+=`<td style="background:#f8fafc"></td></tr>`;
+    });
+    // Add assembly row
+    body+=`<tr><td colspan="${phases.length+2}" style="padding:0">
+      <button class="add-row-btn w-100 border-0 py-1 px-4 text-start" onclick="openAddAsm(${ci})">
+        <i class="fa fa-plus me-1"></i> Add assembly to "${cat.name}"
+      </button></td></tr>`;
+  });
+  // Add category row
+  body+=`<tr><td colspan="${phases.length+3}" style="padding:3px">
+    <button class="add-row-btn w-100 border-0 py-1 px-4 text-start" onclick="addCategory()">
+      <i class="fa fa-layer-group me-1"></i> Add New Category
+    </button></td></tr>`;
+  body+='</tbody>';
+  table.innerHTML=hdr+body;
+}
+
+function commitPhaseRename(idx,inp){
+  inp.setAttribute('readonly',true);
+  currentProject.phases[idx]=inp.value;
+  saveData(); calcProjectEnd();
+}
+function deletePhase(idx){
+  if(!confirm('Delete this phase? All data for this phase will be lost.')) return;
+  currentProject.phases.splice(idx,1);
+  currentProject.categories.forEach(cat=>cat.assemblies.forEach(asm=>{
+    const nd={};
+    Object.entries(asm.dates).forEach(([k,v])=>{ const ki=Number(k); if(ki<idx) nd[ki]=v; else if(ki>idx) nd[ki-1]=v; });
+    asm.dates=nd;
+    const ns={};
+    Object.entries(asm.subtasks||{}).forEach(([k,v])=>{ const ki=Number(k); if(ki<idx) ns[ki]=v; else if(ki>idx) ns[ki-1]=v; });
+    asm.subtasks=ns;
+  }));
+  saveData(); renderPert(); calcProjectEnd();
+}
+
+function renameCat(ci,td){
+  Swal.fire({title:'Rename Category',input:'text',inputValue:currentProject.categories[ci].name,showCancelButton:true,confirmButtonColor:'#2a5071'}).then(r=>{ if(r.isConfirmed&&r.value){currentProject.categories[ci].name=r.value;saveData();renderPert();}});
+}
+function renameAsm(ci,ai,td){
+  Swal.fire({title:'Rename Assembly',input:'text',inputValue:currentProject.categories[ci].assemblies[ai].name,showCancelButton:true,confirmButtonColor:'#2a5071'}).then(r=>{ if(r.isConfirmed&&r.value){currentProject.categories[ci].assemblies[ai].name=r.value;saveData();renderPert();}});
+}
+
+function openPertCell(ci,ai,pi){
+  pertCellTarget={ci,ai,pi};
+  const asm=currentProject.categories[ci].assemblies[ai];
+  const ph=currentProject.phases[pi];
+  const d=asm.dates[pi]||{};
+  document.getElementById('pertCellTitle').textContent=`${ph} — ${asm.name}`;
+  document.getElementById('pertCellAsm').textContent=`${currentProject.categories[ci].name} / ${asm.name}`;
+  document.getElementById('pertDays').value=d.days||'';
+  document.getElementById('pertStart').value=d.start||'';
+  document.getElementById('pertEnd').value=d.end||'';
+  new bootstrap.Modal(document.getElementById('pertCellModal')).show();
+}
+function savePertCell(){
+  const {ci,ai,pi}=pertCellTarget;
+  const days=document.getElementById('pertDays').value;
+  const start=document.getElementById('pertStart').value;
+  const end=document.getElementById('pertEnd').value;
+  if(!days&&!start) return Swal.fire('Error','Enter days or start/end dates','error');
+  const d={};
+  if(days) d.days=Number(days);
+  if(start) d.start=start;
+  if(end) d.end=end;
+  currentProject.categories[ci].assemblies[ai].dates[pi]=d;
+  saveData(); bootstrap.Modal.getInstance(document.getElementById('pertCellModal')).hide();
+  renderPert(); calcProjectEnd();
+}
+function clearPertCell(){
+  const {ci,ai,pi}=pertCellTarget;
+  delete currentProject.categories[ci].assemblies[ai].dates[pi];
+  saveData(); bootstrap.Modal.getInstance(document.getElementById('pertCellModal')).hide();
+  renderPert(); calcProjectEnd();
+}
+
+function addPhase(){ document.getElementById('phaseNameInp').value=''; new bootstrap.Modal(document.getElementById('phaseModal')).show(); }
+function confirmAddPhase(){
+  const n=document.getElementById('phaseNameInp').value.trim();
+  if(!n) return;
+  currentProject.phases.push(n);
+  saveData(); bootstrap.Modal.getInstance(document.getElementById('phaseModal')).hide(); renderPert();
+}
+
+function addCategory(){ document.getElementById('catNameInp').value=''; new bootstrap.Modal(document.getElementById('catModal')).show(); }
+function confirmAddCategory(){
+  const n=document.getElementById('catNameInp').value.trim();
+  if(!n) return;
+  currentProject.categories.push({id:'cat'+Date.now(),name:n,assemblies:[]});
+  saveData(); bootstrap.Modal.getInstance(document.getElementById('catModal')).hide(); renderPert();
+}
+
+function openAddAsm(ci){
+  addAsmCatIdx=ci;
+  document.getElementById('asmModalCatName').textContent=currentProject.categories[ci].name;
+  document.getElementById('asmNameInp').value='';
+  new bootstrap.Modal(document.getElementById('asmModal')).show();
+}
+function confirmAddAsm(){
+  const n=document.getElementById('asmNameInp').value.trim();
+  if(!n) return;
+  const id='asm'+Date.now();
+  currentProject.categories[addAsmCatIdx].assemblies.push({id,name:n,subtasks:{},dates:{}});
+  if(!currentProject.components) currentProject.components={};
+  currentProject.components[id]=[];
+  saveData(); bootstrap.Modal.getInstance(document.getElementById('asmModal')).hide(); renderPert();
+}
+
+// PERT paste from Excel
+function parsePertPaste(){
+  const text=document.getElementById('pertPasteArea').value.trim();
+  const ci=Number(document.getElementById('pertPasteCat').value);
+  if(!text||isNaN(ci)) return;
+  const rows=text.split('\n');
+  let added=0;
+  rows.forEach(row=>{
+    const cols=row.split('\t').map(c=>c.trim());
+    if(!cols[0]) return;
+    const asmName=cols[0];
+    const id='asm'+Date.now()+Math.random().toString(36).slice(2);
+    const dates={};
+    currentProject.phases.forEach((_,pi)=>{ const v=cols[pi+1]; if(v&&!isNaN(Number(v))&&Number(v)>0) dates[pi]={days:Number(v)}; });
+    currentProject.categories[ci].assemblies.push({id,name:asmName,subtasks:{},dates});
+    if(!currentProject.components) currentProject.components={};
+    currentProject.components[id]=[];
+    added++;
+  });
+  saveData(); renderPert(); calcProjectEnd();
+  document.getElementById('pertPasteArea').value='';
+  Swal.fire({toast:true,icon:'success',title:`${added} assemblies imported`,position:'top-end',timer:2000,showConfirmButton:false});
+}
+
+// ============================================================
+// TABULAR VIEW
+// ============================================================
+function renderTabular(){
+  if(!currentProject) return;
+  const body=document.getElementById('taskBody');
+  body.innerHTML='';
+  let taskNum=0;
+  currentProject.categories.forEach((cat,ci)=>{
+    cat.assemblies.forEach((asm,ai)=>{
+      currentProject.phases.forEach((ph,pi)=>{
+        const d=asm.dates[pi];
+        if(!d) return;
+        taskNum++;
+        const days=d.days||'';
+        const start=d.start||(currentProject.startDate?getPhaseStart(currentProject,ci,ai,pi).toISOString().split('T')[0]:'');
+        let endStr='';
+        if(d.end) endStr=d.end;
+        else if(start&&days){ const e=new Date(start); e.setDate(e.getDate()+Number(days)); endStr=e.toISOString().split('T')[0]; }
+        const key=`${asm.id}|${pi}`;
+
+        // Subtasks for this specific phase
+        const subs=(asm.subtasks&&asm.subtasks[pi])||[];
+
+        const tr=document.createElement('tr');
+        tr.className='task-row-parent';
+        tr.dataset.key=key;
+        tr.innerHTML=`
+          <td>
+            <span class="sn-badge">${taskNum}.</span>
+            ${subs.length?`<span class="toggle-sub" id="tog-${key.replace('|','_')}" onclick="toggleSubs('${key.replace('|','_')}',this)" style="cursor:pointer;color:var(--yd-primary);margin-right:4px"><i class="fa fa-chevron-right" style="font-size:.65rem"></i></span>`:''}
+            <span style="font-size:.72rem;color:#aaa">${cat.name} /</span> ${asm.name}
+          </td>
+          <td><span class="phase-tag" style="background:${phaseHex[pi%phaseHex.length]}">${ph}</span></td>
+          <td>${start?`<span class="date-badge">${start}</span>`:'<span style="color:#ccc">—</span>'}</td>
+          <td>${endStr?`<span class="date-badge">${endStr}</span>`:'<span style="color:#ccc">—</span>'}</td>
+          <td>${days?`<b>${days}</b>d`:'<span style="color:#ccc">—</span>'}</td>
+          <td><button class="btn-sm-icon" onclick="openDateModal('${key}','${asm.name} — ${ph}',${days},'${start}','${endStr}')" title="Edit"><i class="fa fa-pen"></i></button></td>`;
+        tr.oncontextmenu=(e)=>{ e.preventDefault(); showTaskCtx(e,asm.id,pi,taskNum,asm.name,ph); };
+        body.appendChild(tr);
+
+        // Subtask rows
+        subs.forEach((sub,si)=>{
+          const str=document.createElement('tr');
+          str.className='task-row-sub';
+          str.dataset.parentKey=key.replace('|','_');
+          str.style.display='none';
+          str.innerHTML=`
+            <td><span class="sn-badge">${taskNum}.${si+1}</span>${sub.name}</td>
+            <td><span class="phase-tag" style="background:${phaseHex[pi%phaseHex.length]};opacity:.8">${ph}</span></td>
+            <td>${start?`<span class="date-badge">${start}</span>`:'—'}</td>
+            <td>${endStr?`<span class="date-badge">${endStr}</span>`:'—'}</td>
+            <td>${days?`${days}d`:''} <span style="font-size:.7rem;color:#aaa">(same)</span></td>
+            <td><button class="btn-sm-icon" onclick="deleteSubtask('${asm.id}',${pi},'${sub.id}')" title="Delete"><i class="fa fa-times" style="color:var(--yd-red)"></i></button></td>`;
+          body.appendChild(str);
+        });
+      });
+    });
+  });
+}
+
+function toggleSubs(key,el){
+  const rows=document.querySelectorAll(`[data-parent-key="${key}"]`);
+  const hidden=rows.length&&rows[0].style.display==='none';
+  rows.forEach(r=>r.style.display=hidden?'':'none');
+  const icon=el.querySelector('i');
+  if(icon) icon.className=hidden?'fa fa-chevron-down':'fa fa-chevron-right';
+  icon.style.fontSize='.65rem';
+}
+
+function showTaskCtx(e,asmId,phaseIdx,sn,asmName,phName){
+  ctxData={asmId,phaseIdx,asmName,phName};
+  const menu=document.getElementById('ctxMenu');
+  menu.innerHTML=`
+    <div class="ctx-item" onclick="openSubModal()"><i class="fa fa-sitemap" style="color:var(--yd-primary)"></i>Add Subtask (${phName})</div>
+    <div class="ctx-item" onclick="openDateModal('${asmId}|${phaseIdx}','${asmName} — ${phName}',0,'','')"><i class="fa fa-pen" style="color:#198754"></i>Edit Dates</div>
+    <div class="ctx-divider"></div>
+    <div class="ctx-item" onclick="deletePhaseTask('${asmId}',${phaseIdx})"><i class="fa fa-trash" style="color:var(--yd-red)"></i>Remove Phase Entry</div>`;
+  menu.style.display='block';
+  menu.style.left=e.clientX+'px';
+  menu.style.top=e.clientY+'px';
+}
+document.addEventListener('click',()=>{ document.getElementById('ctxMenu').style.display='none'; });
+
+function openSubModal(){
+  subModalTarget={asmId:ctxData.asmId,phaseIdx:ctxData.phaseIdx};
+  document.getElementById('subAsmName').textContent=ctxData.asmName;
+  document.getElementById('subPhaseName').textContent=ctxData.phName;
+  document.getElementById('subNameInp').value='';
+  new bootstrap.Modal(document.getElementById('subModal')).show();
+}
+function confirmAddSub(){
+  const n=document.getElementById('subNameInp').value.trim();
+  if(!n) return;
+  const {asmId,phaseIdx}=subModalTarget;
+  let found=false;
+  currentProject.categories.forEach(cat=>cat.assemblies.forEach(asm=>{
+    if(asm.id===asmId){
+      if(!asm.subtasks) asm.subtasks={};
+      if(!asm.subtasks[phaseIdx]) asm.subtasks[phaseIdx]=[];
+      asm.subtasks[phaseIdx].push({id:'sub'+Date.now(),name:n});
+      found=true;
+    }
+  }));
+  if(found){ saveData(); bootstrap.Modal.getInstance(document.getElementById('subModal')).hide(); renderTabular(); }
+}
+
+function deleteSubtask(asmId,phaseIdx,subId){
+  currentProject.categories.forEach(cat=>cat.assemblies.forEach(asm=>{
+    if(asm.id===asmId&&asm.subtasks&&asm.subtasks[phaseIdx]){
+      asm.subtasks[phaseIdx]=asm.subtasks[phaseIdx].filter(s=>s.id!==subId);
+    }
+  }));
+  saveData(); renderTabular();
+}
+
+function deletePhaseTask(asmId,phaseIdx){
+  Swal.fire({title:'Remove this phase entry?',icon:'warning',showCancelButton:true,confirmButtonColor:'#dc3545'}).then(r=>{
+    if(r.isConfirmed){
+      currentProject.categories.forEach(cat=>cat.assemblies.forEach(asm=>{
+        if(asm.id===asmId){ delete asm.dates[phaseIdx]; if(asm.subtasks) delete asm.subtasks[phaseIdx]; }
+      }));
+      saveData(); renderTabular(); renderPert(); calcProjectEnd();
+    }
+  });
+}
+
+function openDateModal(key,label,days,start,end){
+  dateTargetKey=key;
+  document.getElementById('dateTaskName').textContent=label;
+  document.getElementById('dtDays').value=days||'';
+  document.getElementById('dtStart').value=start||'';
+  document.getElementById('dtEnd').value=end||'';
+  new bootstrap.Modal(document.getElementById('dateModal')).show();
+}
+function saveDates(){
+  const d={}; const days=document.getElementById('dtDays').value; const start=document.getElementById('dtStart').value; const end=document.getElementById('dtEnd').value;
+  if(!days&&!start) return Swal.fire('Error','Enter days or dates','error');
+  if(days) d.days=Number(days); if(start) d.start=start; if(end) d.end=end;
+  const [asmId,pi]=dateTargetKey.split('|'); const piN=Number(pi);
+  currentProject.categories.forEach(cat=>cat.assemblies.forEach(asm=>{ if(asm.id===asmId) asm.dates[piN]=d; }));
+  saveData(); bootstrap.Modal.getInstance(document.getElementById('dateModal')).hide(); renderTabular(); renderPert(); calcProjectEnd();
+}
+
+// ============================================================
+// COMPONENT REGISTER
+// ============================================================
+function initCompView(){
+  const p=currentProject;
+  const sel=document.getElementById('asmSelector');
+  sel.innerHTML='';
+  let first=null;
+  p.categories.forEach(cat=>cat.assemblies.forEach(asm=>{
+    if(!first) first=asm;
+    const chip=document.createElement('div');
+    chip.className='asm-chip'+(asm===first?' active':'');
+    chip.textContent=asm.name;
+    chip.onclick=()=>{ document.querySelectorAll('.asm-chip').forEach(c=>c.classList.remove('active')); chip.classList.add('active'); currentAsm=asm; document.getElementById('compTitle').textContent='Components — '+asm.name; renderCompSheet(); };
+    sel.appendChild(chip);
+  }));
+  currentAsm=first;
+  if(first) document.getElementById('compTitle').textContent='Components — '+first.name;
+  renderCompSheet();
+}
+
+function renderCompSheet(){
+  if(!currentAsm||!currentProject) return;
+  const body=document.getElementById('compBody');
+  body.innerHTML='';
+  const rows=(currentProject.components&&currentProject.components[currentAsm.id])||[];
+  const isPM=currentRole==='PM';
+  document.querySelectorAll('.pm-col').forEach(th=>th.style.display=isPM?'':'none');
+
+  rows.forEach((row,ri)=>{
+    const tr=document.createElement('tr');
+    tr.dataset.rowId=row.id;
+    const pdfBtn=row.pdfName?`<div class="pdf-chip" onclick="viewPDF('${row.pdfName}','${row.pdfData}')"><i class="fa fa-file-pdf"></i>${row.pdfName.length>14?row.pdfName.slice(0,12)+'…':row.pdfName}</div><span class="cr-badge" onclick="openCR('${row.drawingNo}')" title="Change Request" style="cursor:pointer">CR</span>`:`<label style="cursor:pointer;font-size:.7rem;color:#ccc;padding:2px 8px" title="Click to upload PDF"><i class="fa fa-plus-circle me-1"></i>PDF<input type="file" accept=".pdf" style="display:none" onchange="attachPDF(${ri},event)"></label>`;
+    tr.innerHTML=`
+      <td class="row-num-cell">${ri+1}</td>
+      <td><input data-field="desc" data-ri="${ri}" value="${esc(row.desc)}" oninput="uc(${ri},'desc',this.value)" onkeydown="cellNav(event,${ri},1)" tabindex="0"></td>
+      <td style="padding:3px 6px">${pdfBtn}</td>
+      <td><input data-field="drawingNo" data-ri="${ri}" value="${esc(row.drawingNo)}" oninput="uc(${ri},'drawingNo',this.value)" onkeydown="cellNav(event,${ri},3)" tabindex="0"></td>
+      <td><input data-field="qty" data-ri="${ri}" value="${esc(row.qty)}" oninput="uc(${ri},'qty',this.value)" style="text-align:center" onkeydown="cellNav(event,${ri},4)" tabindex="0"></td>
+      <td><input data-field="material" data-ri="${ri}" value="${esc(row.material)}" oninput="uc(${ri},'material',this.value)" onkeydown="cellNav(event,${ri},5)" tabindex="0"></td>
+      <td><input data-field="weight" data-ri="${ri}" value="${esc(row.weight)}" oninput="uc(${ri},'weight',this.value)" onkeydown="cellNav(event,${ri},6)" tabindex="0"></td>
+      ${isPM?`
+      <td class="pm-cell"><input data-ri="${ri}" value="${esc(row.vendor)}" oninput="uc(${ri},'vendor',this.value)" onkeydown="cellNav(event,${ri},7)" tabindex="0"></td>
+      <td class="pm-cell"><input data-ri="${ri}" value="${esc(row.poNo)}" oninput="uc(${ri},'poNo',this.value)" onkeydown="cellNav(event,${ri},8)" tabindex="0"></td>
+      <td class="pm-cell"><input data-ri="${ri}" value="${esc(row.price)}" oninput="uc(${ri},'price',this.value)" style="text-align:right" onkeydown="cellNav(event,${ri},9)" tabindex="0"></td>
+      <td class="pm-cell"><input type="date" data-ri="${ri}" value="${esc(row.dispatchDate)}" oninput="uc(${ri},'dispatchDate',this.value)" onkeydown="cellNav(event,${ri},10)" tabindex="0"></td>
+      <td class="pm-cell"><select class="status-sel" onchange="uc(${ri},'status',this.value)" style="color:${statusColor(row.status)}">
+        <option value="pending" ${row.status==='pending'?'selected':''}>⬤ Pending</option>
+        <option value="ordered" ${row.status==='ordered'?'selected':''}>⬤ Ordered</option>
+        <option value="received" ${row.status==='received'?'selected':''}>⬤ Received</option>
+        <option value="delayed" ${row.status==='delayed'?'selected':''}>⬤ Delayed</option>
+      </select></td>`:
+      '<td style="display:none"></td><td style="display:none"></td><td style="display:none"></td><td style="display:none"></td><td style="display:none"></td>'}`;
+    tr.oncontextmenu=(e)=>{ e.preventDefault(); showCompCtx(e,ri); };
+    body.appendChild(tr);
+  });
+  // Add row
+  const addTr=document.createElement('tr');
+  addTr.innerHTML=`<td class="row-num-cell" style="color:#ccc">+</td><td colspan="11"><button class="add-row-btn border-0 px-4 py-1 w-100 text-start" onclick="addCompRow()"><i class="fa fa-plus me-1"></i>Add row</button></td>`;
+  body.appendChild(addTr);
+
+  setupCompPaste();
+}
+
+function renderTabular(){
+  if(!currentProject) return;
+  const body=document.getElementById('taskBody');
+  body.innerHTML='';
+  let taskNum=0;
+  currentProject.categories.forEach((cat,ci)=>{
+    cat.assemblies.forEach((asm,ai)=>{
+      currentProject.phases.forEach((ph,pi)=>{
+        const d=asm.dates[pi];
+        if(!d) return;
+        taskNum++;
+        const days=d.days||'';
+        const start=d.start||(currentProject.startDate?getPhaseStart(currentProject,ci,ai,pi).toISOString().split('T')[0]:'');
+        let endStr='';
+        if(d.end) endStr=d.end;
+        else if(start&&days){ const e=new Date(start); e.setDate(e.getDate()+Number(days)); endStr=e.toISOString().split('T')[0]; }
+        const key=`${asm.id}|${pi}`;
+        const subs=(asm.subtasks&&asm.subtasks[pi])||[];
+        const metaBits=[d.manager?`Mgr: ${d.manager}`:'', d.planner?`Planner: ${d.planner}`:'', d.status?`Status: ${d.status}`:''].filter(Boolean).join(' | ');
+
+        const tr=document.createElement('tr');
+        tr.className='task-row-parent';
+        tr.dataset.key=key;
+        tr.innerHTML=`
+          <td>
+            <span class="sn-badge">${taskNum}.</span>
+            ${subs.length?`<span class="toggle-sub" id="tog-${key.replace('|','_')}" onclick="toggleSubs('${key.replace('|','_')}',this)" style="cursor:pointer;color:var(--yd-primary);margin-right:4px"><i class="fa fa-chevron-right" style="font-size:.65rem"></i></span>`:''}
+            <span style="font-size:.72rem;color:#aaa">${cat.name} /</span> ${asm.name}
+            ${metaBits?`<span class="task-meta-note">${metaBits}</span>`:''}
+          </td>
+          <td><span class="phase-tag" style="background:${phaseHex[pi%phaseHex.length]}">${ph}</span></td>
+          <td>${start?`<span class="date-badge">${start}</span>`:'<span style="color:#ccc">—</span>'}</td>
+          <td>${endStr?`<span class="date-badge">${endStr}</span>`:'<span style="color:#ccc">—</span>'}</td>
+          <td>${days?`<b>${days}</b>d`:'<span style="color:#ccc">—</span>'}</td>
+          <td><button class="btn-sm-icon" onclick="openDateModal('${key}','${asm.name} - ${ph}',${days},'${start}','${endStr}')" title="Edit"><i class="fa fa-pen"></i></button></td>`;
+        tr.oncontextmenu=(e)=>{ e.preventDefault(); showTaskCtx(e,asm.id,pi,taskNum,asm.name,ph); };
+        body.appendChild(tr);
+
+        subs.forEach((sub,si)=>{
+          const str=document.createElement('tr');
+          str.className='task-row-sub';
+          str.dataset.parentKey=key.replace('|','_');
+          str.style.display='none';
+          const subStart=sub.start || start;
+          const subEnd=sub.end || endStr;
+          const subDays=sub.days || days;
+          const subBits=[sub.manager?`Mgr: ${sub.manager}`:'', sub.status?`Status: ${sub.status}`:''].filter(Boolean).join(' | ');
+          str.innerHTML=`
+            <td><span class="sn-badge">${taskNum}.${si+1}</span>${sub.name}${subBits?`<span class="task-meta-note">${subBits}</span>`:''}</td>
+            <td><span class="phase-tag" style="background:${phaseHex[pi%phaseHex.length]};opacity:.8">${ph}</span></td>
+            <td>${subStart?`<span class="date-badge">${subStart}</span>`:'—'}</td>
+            <td>${subEnd?`<span class="date-badge">${subEnd}</span>`:'—'}</td>
+            <td>${subDays?`${subDays}d`:''} <span style="font-size:.7rem;color:#aaa">${sub.days?'(subtask)':'(same)'}</span></td>
+            <td><button class="btn-sm-icon" onclick="deleteSubtask('${asm.id}',${pi},'${sub.id}')" title="Delete"><i class="fa fa-times" style="color:var(--yd-red)"></i></button></td>`;
+          body.appendChild(str);
+        });
+      });
+    });
+  });
+  if(!taskNum){
+    body.innerHTML='<tr><td colspan="6" style="padding:28px 18px;text-align:center;color:#98a2ad;font-weight:700">No task breakdown yet. Check out this project and add categories or assemblies from the PERT view.</td></tr>';
+  }
+}
+
+function initCompView(){
+  const project=currentProject;
+  const sel=document.getElementById('asmSelector');
+  sel.innerHTML='';
+  let first=null;
+  project.categories.forEach(cat=>cat.assemblies.forEach(asm=>{
+    if(!first) first=asm;
+    const chip=document.createElement('div');
+    chip.className='asm-chip'+(asm===first?' active':'');
+    chip.textContent=asm.name;
+    chip.onclick=()=>{ document.querySelectorAll('.asm-chip').forEach(c=>c.classList.remove('active')); chip.classList.add('active'); currentAsm=asm; document.getElementById('compTitle').textContent='Components - '+asm.name; renderCompSheet(); };
+    sel.appendChild(chip);
+  }));
+  currentAsm=first;
+  if(first) document.getElementById('compTitle').textContent='Components - '+first.name;
+  renderCompSheet();
+}
+
+function renderCompSheet(){
+  const body=document.getElementById('compBody');
+  if(!body) return;
+  body.innerHTML='';
+  if(!currentProject){
+    return;
+  }
+  if(!currentAsm){
+    document.getElementById('compTitle').textContent='Components';
+    body.innerHTML='<tr><td colspan="12" style="padding:28px 18px;text-align:center;color:#98a2ad;font-weight:700">No assemblies available yet. Add assemblies from the PERT view to start the component register.</td></tr>';
+    return;
+  }
+  const rows=(currentProject.components&&currentProject.components[currentAsm.id])||[];
+  const isPM=currentRole==='PM';
+  document.querySelectorAll('.pm-col').forEach(th=>th.style.display=isPM?'':'none');
+
+  rows.forEach((row,ri)=>{
+    const tr=document.createElement('tr');
+    tr.dataset.rowId=row.id;
+    const pdfBtn=row.pdfName?`<div class="pdf-chip" onclick="viewPDF('${row.pdfName}','${row.pdfData}')"><i class="fa fa-file-pdf"></i>${row.pdfName.length>14?row.pdfName.slice(0,12)+'...':row.pdfName}</div><span class="cr-badge" onclick="openCR('${row.drawingNo}')" title="Change Request" style="cursor:pointer">CR</span>`:`<label style="cursor:pointer;font-size:.7rem;color:#ccc;padding:2px 8px" title="Click to upload PDF"><i class="fa fa-plus-circle me-1"></i>PDF<input type="file" accept=".pdf" style="display:none" onchange="attachPDF(${ri},event)"></label>`;
+    tr.innerHTML=`
+      <td class="row-num-cell">${ri+1}</td>
+      <td><input data-field="desc" data-ri="${ri}" value="${esc(row.desc)}" oninput="uc(${ri},'desc',this.value)" onkeydown="cellNav(event,${ri},1)" tabindex="0"></td>
+      <td style="padding:3px 6px">${pdfBtn}</td>
+      <td><input data-field="drawingNo" data-ri="${ri}" value="${esc(row.drawingNo)}" oninput="uc(${ri},'drawingNo',this.value)" onkeydown="cellNav(event,${ri},3)" tabindex="0"></td>
+      <td><input data-field="qty" data-ri="${ri}" value="${esc(row.qty)}" oninput="uc(${ri},'qty',this.value)" style="text-align:center" onkeydown="cellNav(event,${ri},4)" tabindex="0"></td>
+      <td><input data-field="material" data-ri="${ri}" value="${esc(row.material)}" oninput="uc(${ri},'material',this.value)" onkeydown="cellNav(event,${ri},5)" tabindex="0"></td>
+      <td><input data-field="weight" data-ri="${ri}" value="${esc(row.weight)}" oninput="uc(${ri},'weight',this.value)" onkeydown="cellNav(event,${ri},6)" tabindex="0"></td>
+      ${isPM?`
+      <td class="pm-cell"><input data-ri="${ri}" value="${esc(row.vendor)}" oninput="uc(${ri},'vendor',this.value)" onkeydown="cellNav(event,${ri},7)" tabindex="0"></td>
+      <td class="pm-cell"><input data-ri="${ri}" value="${esc(row.poNo)}" oninput="uc(${ri},'poNo',this.value)" onkeydown="cellNav(event,${ri},8)" tabindex="0"></td>
+      <td class="pm-cell"><input data-ri="${ri}" value="${esc(row.price)}" oninput="uc(${ri},'price',this.value)" style="text-align:right" onkeydown="cellNav(event,${ri},9)" tabindex="0"></td>
+      <td class="pm-cell"><input type="date" data-ri="${ri}" value="${esc(row.dispatchDate)}" oninput="uc(${ri},'dispatchDate',this.value)" onkeydown="cellNav(event,${ri},10)" tabindex="0"></td>
+      <td class="pm-cell"><select class="status-sel" onchange="uc(${ri},'status',this.value)" style="color:${statusColor(row.status)}">
+        <option value="pending" ${row.status==='pending'?'selected':''}>Pending</option>
+        <option value="ordered" ${row.status==='ordered'?'selected':''}>Ordered</option>
+        <option value="received" ${row.status==='received'?'selected':''}>Received</option>
+        <option value="delayed" ${row.status==='delayed'?'selected':''}>Delayed</option>
+      </select></td>`:
+      '<td style="display:none"></td><td style="display:none"></td><td style="display:none"></td><td style="display:none"></td><td style="display:none"></td>'}`;
+    tr.oncontextmenu=(e)=>{ e.preventDefault(); showCompCtx(e,ri); };
+    body.appendChild(tr);
+  });
+
+  const addTr=document.createElement('tr');
+  addTr.innerHTML=`<td class="row-num-cell" style="color:#ccc">+</td><td colspan="11"><button class="add-row-btn border-0 px-4 py-1 w-100 text-start" onclick="addCompRow()"><i class="fa fa-plus me-1"></i>Add row</button></td>`;
+  body.appendChild(addTr);
+  setupCompPaste();
+}
+
+function esc(v){ return (v||'').toString().replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function statusColor(s){ return s==='ordered'?'#0d6efd':s==='received'?'#198754':s==='delayed'?'#dc3545':'#888'; }
+
+function uc(ri,field,val){
+  const rows=currentProject.components[currentAsm.id];
+  if(rows&&rows[ri]) rows[ri][field]=val;
+  saveData();
+}
+
+function attachPDF(ri,evt){
+  const file=evt.target.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    const rows=currentProject.components[currentAsm.id];
+    rows[ri].pdfName=file.name; rows[ri].pdfData=ev.target.result;
+    if(!rows[ri].drawingNo) rows[ri].drawingNo=file.name.replace('.pdf','');
+    saveData(); renderCompSheet();
+  };
+  reader.readAsDataURL(file);
+}
+
+function addCompRow(){
+  if(!currentProject.components) currentProject.components={};
+  if(!currentProject.components[currentAsm.id]) currentProject.components[currentAsm.id]=[];
+  currentProject.components[currentAsm.id].push({id:'row'+Date.now(),desc:'',pdfName:'',pdfData:'',drawingNo:'',qty:'1',material:'',weight:'',vendor:'',poNo:'',price:'',dispatchDate:'',status:'pending',crLog:[]});
+  saveData(); renderCompSheet();
+  setTimeout(()=>{ const inp=document.querySelectorAll('#compBody tr:not(:last-child) td:nth-child(2) input'); if(inp.length) inp[inp.length-1].focus(); },50);
+}
+
+// CELL NAVIGATION
+function cellNav(e,ri,ci){
+  const rows=document.querySelectorAll('#compBody tr:not(:last-child)');
+  const maxCol=currentRole==='PM'?11:7;
+  let tRow=ri,tCol=ci;
+  if(e.key==='Tab'){ e.preventDefault(); tCol=ci+1; if(tCol>maxCol){tCol=1;tRow=Math.min(ri+1,rows.length-1);} }
+  else if(e.key==='ArrowDown'){ tRow=Math.min(ri+1,rows.length-1); }
+  else if(e.key==='ArrowUp'){ tRow=Math.max(ri-1,0); }
+  else return;
+  const tTr=rows[tRow]; if(!tTr) return;
+  const cells=tTr.querySelectorAll('td'); const cell=cells[tCol];
+  if(cell){ const inp=cell.querySelector('input,select'); if(inp) inp.focus(); }
+}
+
+// EXCEL PASTE — multi-row paste into comp sheet
+function setupCompPaste(){
+  const sheet=document.getElementById('compSheet');
+  sheet.onpaste=(e)=>{
+    const active=document.activeElement;
+    if(!active||(active.tagName!=='INPUT'&&active.tagName!=='SELECT')) return;
+    // Get focused row index
+    const allInputs=Array.from(document.querySelectorAll('#compBody tr:not(:last-child) td input[data-ri]'));
+    const ri=Number(active.dataset.ri||0);
+    const ci=Array.from(active.closest('tr').querySelectorAll('td')).indexOf(active.closest('td'));
+    const clipboard=(e.clipboardData||window.clipboardData).getData('text');
+    if(!clipboard) return;
+    const pasteRows=clipboard.trim().split('\n');
+    if(pasteRows.length<=1) return; // single value — let browser handle
+    e.preventDefault();
+    const rows=currentProject.components[currentAsm.id];
+    // Map column index to field
+    const designFields=['','desc','','drawingNo','qty','material','weight'];
+    const pmFields=['','desc','','drawingNo','qty','material','weight','vendor','poNo','price','dispatchDate','status'];
+    const fields=currentRole==='PM'?pmFields:designFields;
+    pasteRows.forEach((rowStr,idx)=>{
+      const cols=rowStr.split('\t');
+      const targetRi=ri+idx;
+      // Auto-add rows if needed
+      while(rows.length<=targetRi) rows.push({id:'row'+Date.now()+idx,desc:'',pdfName:'',pdfData:'',drawingNo:'',qty:'1',material:'',weight:'',vendor:'',poNo:'',price:'',dispatchDate:'',status:'pending',crLog:[]});
+      cols.forEach((val,colOffset)=>{
+        const fieldIdx=ci+colOffset;
+        const field=fields[fieldIdx];
+        if(field&&rows[targetRi]) rows[targetRi][field]=val.trim();
+      });
+    });
+    saveData(); renderCompSheet();
+    Swal.fire({toast:true,icon:'success',title:`Pasted ${pasteRows.length} rows`,position:'top-end',timer:1500,showConfirmButton:false});
+  };
+}
+
+// COMP CONTEXT MENU
+function showCompCtx(e,ri){
+  compCtxRowIdx=ri;
+  const menu=document.getElementById('ctxMenu');
+  menu.innerHTML=`
+    <div class="ctx-item" onclick="insertCompRow(${ri},0)"><i class="fa fa-arrow-up" style="color:var(--yd-primary)"></i>Insert row above</div>
+    <div class="ctx-item" onclick="insertCompRow(${ri},1)"><i class="fa fa-arrow-down" style="color:var(--yd-primary)"></i>Insert row below</div>
+    <div class="ctx-item" onclick="dupCompRow(${ri})"><i class="fa fa-copy" style="color:#198754"></i>Duplicate row</div>
+    <div class="ctx-divider"></div>
+    <div class="ctx-item" onclick="openCR('')"><i class="fa fa-file-signature" style="color:#f77f00"></i>Change Request</div>
+    <div class="ctx-divider"></div>
+    <div class="ctx-item" onclick="delCompRow(${ri})"><i class="fa fa-trash" style="color:var(--yd-red)"></i>Delete row</div>`;
+  menu.style.display='block'; menu.style.left=e.clientX+'px'; menu.style.top=e.clientY+'px';
+}
+function insertCompRow(ri,below){
+  const rows=currentProject.components[currentAsm.id];
+  rows.splice(ri+below,0,{id:'row'+Date.now(),desc:'',pdfName:'',pdfData:'',drawingNo:'',qty:'1',material:'',weight:'',vendor:'',poNo:'',price:'',dispatchDate:'',status:'pending',crLog:[]});
+  saveData(); renderCompSheet();
+}
+function dupCompRow(ri){
+  const rows=currentProject.components[currentAsm.id];
+  const clone=JSON.parse(JSON.stringify(rows[ri])); clone.id='row'+Date.now();
+  rows.splice(ri+1,0,clone); saveData(); renderCompSheet();
+}
+function delCompRow(ri){
+  Swal.fire({title:'Delete row?',icon:'warning',showCancelButton:true,confirmButtonColor:'#dc3545',confirmButtonText:'Delete'}).then(r=>{ if(r.isConfirmed){ currentProject.components[currentAsm.id].splice(ri,1); saveData(); renderCompSheet(); } });
+}
+
+// FOLDER/FILE UPLOAD
+function handleFolderUpload(e){
+  const files=Array.from(e.target.files).filter(f=>f.name.toLowerCase().endsWith('.pdf'));
+  if(!files.length) return;
+  const rows=currentProject.components[currentAsm.id]||[];
+  let done=0;
+  files.forEach(file=>{
+    const existing=rows.find(r=>r.pdfName===file.name||r.drawingNo===file.name.replace('.pdf',''));
+    const reader=new FileReader();
+    reader.onload=ev=>{
+      if(existing){ existing.pdfData=ev.target.result; existing.pdfName=file.name; if(!existing.drawingNo) existing.drawingNo=file.name.replace('.pdf',''); }
+      else rows.push({id:'row'+Date.now()+file.name,desc:file.name.replace('.pdf',''),pdfName:file.name,pdfData:ev.target.result,drawingNo:file.name.replace('.pdf',''),qty:'1',material:'',weight:'',vendor:'',poNo:'',price:'',dispatchDate:'',status:'pending',crLog:[]});
+      done++; if(done===files.length){ if(!currentProject.components) currentProject.components={}; currentProject.components[currentAsm.id]=rows; saveData(); renderCompSheet(); Swal.fire({toast:true,icon:'success',title:`${files.length} PDF(s) uploaded`,position:'top-end',timer:2500,showConfirmButton:false}); }
+    };
+    reader.readAsDataURL(file);
+  });
+  e.target.value='';
+}
+function handleSinglePDF(e){
+  const file=e.target.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    const rows=currentProject.components[currentAsm.id]||[];
+    rows.push({id:'row'+Date.now(),desc:file.name.replace('.pdf',''),pdfName:file.name,pdfData:ev.target.result,drawingNo:file.name.replace('.pdf',''),qty:'1',material:'',weight:'',vendor:'',poNo:'',price:'',dispatchDate:'',status:'pending',crLog:[]});
+    if(!currentProject.components) currentProject.components={};
+    currentProject.components[currentAsm.id]=rows; saveData(); renderCompSheet();
+  };
+  reader.readAsDataURL(file); e.target.value='';
+}
+
+function viewPDF(name,data){
+  document.getElementById('pdfTitle').textContent=name;
+  const frame=document.getElementById('pdfFrame');
+  const ph=document.getElementById('pdfPlaceholder');
+  if(data&&data.startsWith('data:')){ frame.src=data; frame.style.display=''; ph.style.display='none'; }
+  else{ frame.src=''; frame.style.display='none'; ph.style.display=''; }
+  new bootstrap.Modal(document.getElementById('pdfModal')).show();
+}
+
+function openCR(dwg){ document.getElementById('crDrawing').value=dwg||''; new bootstrap.Modal(document.getElementById('crModal')).show(); }
+function submitCR(){
+  const reason=document.getElementById('crReason').value; const dwg=document.getElementById('crDrawing').value;
+  if(!reason) return Swal.fire('Error','Please provide reason','error');
+  bootstrap.Modal.getInstance(document.getElementById('crModal')).hide();
+  Swal.fire({icon:'success',title:'Change Request Submitted',text:`CR for "${dwg}" logged and sent to Design Team.`,timer:3000,showConfirmButton:false});
+}
+
+// COMP EXPORT
+function exportCompCSV(){
+  if(!currentAsm||!currentProject) return;
+  const rows=(currentProject.components&&currentProject.components[currentAsm.id])||[];
+  const isPM=currentRole==='PM';
+  let csv='Description,Drawing Number,Qty,Material,Weight';
+  if(isPM) csv+=',Vendor,PO No.,Price,Dispatch Date,Status';
+  csv+='\n';
+  rows.forEach(r=>{ csv+=`"${r.desc}","${r.drawingNo}","${r.qty}","${r.material}","${r.weight}"`; if(isPM) csv+=`,"${r.vendor}","${r.poNo}","${r.price}","${r.dispatchDate}","${r.status}"`; csv+='\n'; });
+  const blob=new Blob([csv],{type:'text/csv'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a'); a.href=url; a.download=`${currentProject.code}_${currentAsm.name}_BOM.csv`; a.click();
+  URL.revokeObjectURL(url);
+}
+
+// NEW PROJECT
+function openNewProjectModal(){ const d=new Date(); d.setMonth(d.getMonth()+6); document.getElementById('npDue').value=d.toISOString().split('T')[0]; new bootstrap.Modal(document.getElementById('newProjModal')).show(); }
+function createProject(){
+  const code=document.getElementById('npCode').value.trim();
+  const client=document.getElementById('npClient').value.trim();
+  const site=document.getElementById('npSite').value.trim();
+  const machine=document.getElementById('npMachine').value.trim();
+  const pm=document.getElementById('npPM').value;
+  const due=document.getElementById('npDue').value;
+  const po=parseFloat(document.getElementById('npPO').value)||0;
+  if(!code||!client||!due) return Swal.fire('Error','Project code, client and due date are required','error');
+  if(APP.find(p=>p.code===code||p.projectNumber===code)) return Swal.fire('Error','Project code already exists','error');
+  const today=new Date().toISOString().split('T')[0];
+  const newP=normalizeProject({id:Date.now(),code,projectNumber:code,projectName:client,client,site,machine,pm,dueDate:due,projectedDate:due,plannedEnd:due,labels:machine,state:'In Process',planStatus:'Checked In',poValue:po,phases:['Engineering','Ordering & Mfg','Assembly','Dispatch'],categories:[],components:{},startDate:today}, APP.length);
+  APP.push(newP);
+  saveData();
+  bootstrap.Modal.getInstance(document.getElementById('newProjModal')).hide();
+  renderDashboard();
+  Swal.fire({icon:'success',title:'Project Created',text:`${code} created. Open it to add categories and assemblies.`,timer:3000,showConfirmButton:false});
+}
+
+// DASHBOARD PDF EXPORT
+function exportDashPDF(){
+  const{jsPDF}=window.jspdf;
+  const doc=new jsPDF('landscape');
+  doc.setFillColor(42,80,113); doc.rect(0,0,297,20,'F');
+  doc.setTextColor(255,255,255); doc.setFontSize(14);
+  doc.text('YOGIJI DIGI — Project Realization Dashboard',14,13);
+  doc.autoTable({head:[['Code','Client','Site','PM','Due Date','Progress','PO Value']],body:APP.map(p=>[p.code,p.client,p.site||'',p.pm||'',p.dueDate,p.progress+'%','₹'+(p.poValue/100000).toFixed(1)+'L']),startY:25,headStyles:{fillColor:[42,80,113]}});
+  doc.save('YD_Projects_Dashboard.pdf');
+}
+
+function exportDashPDF(){
+  const{jsPDF}=window.jspdf;
+  const doc=new jsPDF('landscape');
+  doc.setFillColor(42,80,113); doc.rect(0,0,297,20,'F');
+  doc.setTextColor(255,255,255); doc.setFontSize(14);
+  doc.text('YOGIJI DIGI - Active Projects Register',14,13);
+  doc.autoTable({
+    head:[['ID','Project No.','Project','Manager','Labels','State','Plan Status','Start','Due','Projected','Planned End']],
+    body:getDashboardProjects().map(project=>{
+      const view=getProjectView(project);
+      return [
+        project.id,
+        getProjectNumber(project),
+        view.projectName,
+        view.pm,
+        splitLabels(view.labels).join(', '),
+        view.state,
+        normalizePlanStatus(project.planStatus),
+        view.startDate,
+        view.dueDate,
+        view.projectedDate,
+        view.plannedEnd
+      ];
+    }),
+    startY:25,
+    headStyles:{fillColor:[42,80,113]},
+    styles:{fontSize:8}
+  });
+  doc.save('YD_Projects_Dashboard.pdf');
+}
+
+// ============================================================
+// INIT
+// ============================================================
+document.addEventListener('DOMContentLoaded',()=>{ renderDashboard(); });
+</script>
+</body>
+</html>
