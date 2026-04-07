@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1.0" name="viewport"/>
-<title>Project Realization Engine | YOGIJI DIGI</title>
+<title>YD Assem Flow</title>
 <link href="yd-favicon.png" rel="icon"/>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet"/>
@@ -187,7 +187,7 @@ body{background:url('ydbg.jpeg') no-repeat center center fixed;background-size:c
   <a href="#" onclick="showDashboard()" class="logo" style="text-decoration:none">
     <img src="YDLOGO.png" alt="YD" onerror="this.src='https://via.placeholder.com/150x38?text=YOGIJI+DIGI'">
   </a>
-  <span style="font-family:'Nunito',sans-serif;font-weight:900;color:var(--yd-primary);font-size:.95rem;letter-spacing:.5px">Project Realization Engine</span>
+  <span style="font-family:'Nunito',sans-serif;font-weight:900;color:var(--yd-primary);font-size:.95rem;letter-spacing:.5px">YD Assem Flow</span>
   <div class="header-actions">
     <button class="btn btn-sm" style="background:#fde2e4;color:#9f1239;font-weight:700">Report</button>
     <button class="btn btn-sm" style="background:#fff4cc;color:#92400e;font-weight:700">Meeting</button>
@@ -2373,7 +2373,7 @@ function exportDashPDF(){
   const doc=new jsPDF('landscape');
   doc.setFillColor(42,80,113); doc.rect(0,0,297,20,'F');
   doc.setTextColor(255,255,255); doc.setFontSize(14);
-  doc.text('YOGIJI DIGI — Project Realization Dashboard',14,13);
+  doc.text('YD Assem Flow',14,13);
   doc.autoTable({head:[['Code','Client','Site','PM','Due Date','Progress','PO Value']],body:APP.map(p=>[p.code,p.client,p.site||'',p.pm||'',p.dueDate,p.progress+'%','₹'+(p.poValue/100000).toFixed(1)+'L']),startY:25,headStyles:{fillColor:[42,80,113]}});
   doc.save('YD_Projects_Dashboard.pdf');
 }
