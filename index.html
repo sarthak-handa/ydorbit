@@ -3,12 +3,11 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1.0" name="viewport"/>
-<title>YD Assem Flow</title>
+<title>Project Realization Engine | YOGIJI DIGI</title>
 <link href="yd-favicon.png" rel="icon"/>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Open+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{--yd-primary:#2a5071;--yd-red:#ad283f;--yd-dark:#1a2f42;--yd-accent:#e8f0f7;--yd-border:#dce4ec;--cell-h:42px}
 *{box-sizing:border-box}
@@ -188,7 +187,7 @@ body{background:url('ydbg.jpeg') no-repeat center center fixed;background-size:c
   <a href="#" onclick="showDashboard()" class="logo" style="text-decoration:none">
     <img src="YDLOGO.png" alt="YD" onerror="this.src='https://via.placeholder.com/150x38?text=YOGIJI+DIGI'">
   </a>
-  <span style="font-family:'Nunito',sans-serif;font-weight:900;color:var(--yd-primary);font-size:.95rem;letter-spacing:.5px">YD Assem Flow</span>
+  <span style="font-family:'Nunito',sans-serif;font-weight:900;color:var(--yd-primary);font-size:.95rem;letter-spacing:.5px">Project Realization Engine</span>
   <div class="header-actions">
     <button class="btn btn-sm" style="background:#fde2e4;color:#9f1239;font-weight:700">Report</button>
     <button class="btn btn-sm" style="background:#fff4cc;color:#92400e;font-weight:700">Meeting</button>
@@ -558,8 +557,124 @@ const STORAGE_KEY = 'yd_pre_v2';
 const META_STATE_OPTIONS = ['In Process','On Hold','Planned','Completed'];
 const META_PLAN_OPTIONS = ['Checked In','Checked Out'];
 const DEFAULT_PHASES = ['Planning','Engineering','Ordering & Mfg','Assembly','Dispatch'];
-const PROJECT_SEED_ROWS = [];
-
+const PROJECT_SEED_ROWS = [
+  [206, 0, "2529 - CCL 1500 MM @ 30 MPM", "DEFAULT", "Saurabh Jangra", "Checked In", "CCL", "In Process", "2026-01-22", "2025-09-30", "2027-05-29", "2026-02-10"],
+  [214, 0, "N - 2534 - BMWIL - TRIMMING - 1500MM@500MPM", "DEFAULT", "Kunal Dagar", "Checked In", "Rewinding", "In Process", "2026-02-05", "2025-08-31", "2027-03-01", "2026-03-01"],
+  [215, 0, "N - 2544 - APL - CR REWINDING LINE 750 MM @ 200 MPM", "DEFAULT", "Om Dev", "Checked In", "Rewinding", "In Process", "2026-02-05", "2025-08-31", "2027-03-01", "2026-03-01"],
+  [178, 0, "N - 2517 - 6 STAND TANDEM MILL 1500 MM @ 800 MPM", "DEFAULT", "Mayank Bandha", "Checked In", "", "In Process", "2025-06-16", "2026-03-31", "2026-12-25", "2026-03-05"],
+  [185, 0, "N - 2428 - CONTINUOUS GL LINE 1500MM @ 150 MPM", "DEFAULT", "Sachin", "Checked In", "CGL", "In Process", "2025-09-01", "2026-01-31", "2026-11-23", "2026-04-18"],
+  [209, 0, "N  - 2514 - CGL 1500 MM @ 150 MPM (24 TPH)", "DEFAULT", "Sachin", "Checked In", "CGL", "In Process", "2026-01-27", "2026-01-31", "2026-11-23", "2026-04-18"],
+  [56, 0, "N - 2409 - 6HI COLD ROLLING MILL 1250MM @ 1100 MPM", "DEFAULT", "Mayank Bandha", "Checked In", "6HI CRM", "On Hold", "2024-08-12", "2025-03-31", "2025-12-22", "2025-11-06"],
+  [134, 0, "N-2506-Furnace Equip. JSW APL", "DEFAULT", "Aditya Sharma", "Checked In", "APL", "In Process", "2025-04-01", "2026-03-31", "2026-11-12", "2025-12-11"],
+  [135, 0, "N-2506-Terminal Equip. JSW APL", "DEFAULT", "Aditya Sharma", "Checked In", "Pickling Line", "In Process", "2025-04-01", "2026-03-31", "2026-10-31", "2026-02-03"],
+  [119, 0, "N - 2414 - 6HI CRM 1250 MM @ 1200 MPM", "DEFAULT", "Aditya Sharma", "Checked In", "6HI CRM", "In Process", "2025-01-23", "2025-09-30", "2026-10-30", "2025-07-11"],
+  [208, 0, "N - 2533 - PICKLING LINE - 2000MM @ 130MPM", "DEFAULT", "Aditya Saini", "Checked In", "Pickling Line", "In Process", "2026-01-23", "2025-09-30", "2026-10-26", "2025-10-30"],
+  [152, 0, "N - 2511 - 6HI CRM 1500 MM @ 800 MPM", "DEFAULT", "Mayank Bandha", "Checked In", "6HI CRM", "In Process", "2025-07-23", "2026-03-13", "2026-10-16", "2026-02-20"],
+  [177, 0, "N - 2521 - 6HI COLD ROLLING MILL 1500MM @ 1400 MPM", "DEFAULT", "Mayank Bandha", "Checked In", "6HI CRM", "In Process", "2025-06-13", "2026-02-08", "2026-10-15", "2025-11-08"],
+  [183, 0, "N - 2527 GI GL LINE 1350 MM @180 MPM", "DEFAULT", "Saurabh Jangra", "Checked In", "CGL", "In Process", "2025-09-01", "2026-03-31", "2026-10-14", "2026-02-19"],
+  [144, 0, "N - 2501 - 6HI CRM1250 MM @ 1200 MPM", "DEFAULT", "Mayank Bandha", "Checked In", "6HI CRM", "In Process", "2025-04-24", "2026-02-08", "2026-10-14", "2025-11-08"],
+  [41, 0, "2406- Rewinding cum Trimming Line-1680 MM@ 300/500 MPM", "DEFAULT", "Sugreev Yadav", "Checked In", "Rewinding", "On Hold", "2025-02-02", "2024-12-31", "2025-08-10", "2025-02-02"],
+  [147, 0, "N - 2217 - JSW CCL", "DEFAULT", "Saurabh Jangra", "Checked In", "", "In Process", "2025-04-28", "2025-08-08", "2026-10-07", "2025-10-28"],
+  [218, 0, "N - 2606 - SHYAM- PPL 1500MM @120MPM", "DEFAULT", "Aditya Saini", "Checked In", "Pickling Line", "In Process", "2026-02-20", "2026-03-31", "2026-10-06", "2026-08-21"],
+  [125, 0, "N - 2406- JSOL REWINDING CUM TRIMMING LINE 300-500 MPM", "DEFAULT", "Saurabh Jangra", "Checked In", "Trimming Line", "On Hold", "2025-02-05", "2025-04-26", "2026-01-19", "2025-08-06"],
+  [190, 0, "N - 2535 - POR ASSEMBLY FOR 1300 MM", "DEFAULT", "Mayank Bandha", "Checked In", "Spares", "In Process", "2025-10-09", "2026-02-28", "2026-10-02", "2026-04-06"],
+  [115, 0, "N - 2420 COLOR COATING LINE 1500MM @ 50MPM", "DEFAULT", "Saurabh Jangra", "Checked In", "CCL", "In Process", "2025-02-03", "2025-09-30", "2026-10-01", "2026-02-10"],
+  [129, 0, "N - 2504 - BACKUP ROLL ASSEMBLY", "DEFAULT", "Aditya Sharma", "Checked In", "Spares", "In Process", "2025-03-12", "2025-04-12", "2026-09-25", "2025-08-30"],
+  [132, 0, "N - 2421 - FURNACE EQIP. - Continuous Galvanizing Line 750 MM @90 MPM", "DEFAULT", "Sachin", "Checked In", "CGL", "In Process", "2025-01-30", "2025-10-01", "2026-09-24", "2025-04-30"],
+  [182, 0, "N - 2518 - 4HI HR SKIN PASS MILL 1650MM @ 350 MPM", "DEFAULT", "Mayank Bandha", "Checked In", "SPM", "In Process", "2025-07-10", "2026-02-28", "2026-09-23", "2025-07-04"],
+  [180, 0, "N - 2522 4HI SKIN PASS MILL 750 MM @ 150MPM", "DEFAULT", "Aditya Saini", "Checked In", "SPM", "In Process", "2025-07-21", "2026-03-31", "2026-09-12", "2025-06-30"],
+  [145, 0, "N - 2420 CCL OVEN", "DEFAULT", "Saurabh Jangra", "Checked In", "", "In Process", "2025-04-25", "2025-09-30", "2026-09-11", "2025-09-29"],
+  [146, 0, "N - 2508 - SPARES FOR GALVALUME LINE", "DEFAULT", "Yogesh Bawliya", "Checked In", "Spares", "In Process", "2025-04-28", "2025-08-31", "2026-09-11", "2025-10-02"],
+  [148, 0, "N - 2420 - UTILITY", "DEFAULT", "Saurabh Jangra", "Checked In", "", "In Process", "2025-04-29", "2025-07-31", "2026-09-11", "2025-10-03"],
+  [194, 0, "N - 2543 - SPARES FOR GALVANIZING LINE 750MM @ 90 MPM", "DEFAULT", "Anandhu Gopan", "Checked In", "Spares", "In Process", "2025-10-09", "2025-03-31", "2026-09-11", "2026-03-16"],
+  [122, 0, "N - 2421 - TERMINAL EQUIP. - Continuous Galvanizing Line 750 MM @90 MPM", "DEFAULT", "Sachin", "Checked In", "CGL", "In Process", "2025-01-30", "2025-12-01", "2026-09-05", "2025-03-05"],
+  [83, 0, "N - 2412 - Mill Spares", "DEFAULT", "Mayank Bandha", "Checked In", "Spares", "In Process", "2024-09-17", "2025-03-31", "2026-09-04", "2025-04-24"],
+  [84, 0, "N - 2405  JSOL REWINDING CUM TRIMMING LINE 500MPM", "DEFAULT", "Saurabh Jangra", "Checked In", "Trimming Line", "In Process", "2024-09-18", "2025-09-30", "2026-08-28", "2025-06-12"],
+  [118, 0, "N - 2425 - 6HI CRM1250 MM @ 1200 MPM", "DEFAULT", "Mayank Bandha", "Checked In", "6HI CRM", "In Process", "2025-01-08", "2025-09-30", "2026-08-21", "2025-01-19"],
+  [94, 0, "N - 2418 CLARIOS SPARES", "DEFAULT", "Mayank Bandha", "Checked In", "Spares", "In Process", "2024-10-11", "2025-01-20", "2026-08-16", "2025-03-25"],
+  [121, 0, "N - 2404 4HI SKIN PASS MILL 650 MM @ 200MPM", "DEFAULT", "Aditya Sharma", "Checked In", "SPM", "In Process", "2025-01-14", "2025-09-30", "2026-08-16", "2025-06-24"],
+  [169, 0, "N - 2427 - 6HI CRM 1500 MM @ 1400 MPM", "DEFAULT", "Mayank Bandha", "Checked In", "6HI CRM", "In Process", "2025-04-24", "2026-02-08", "2026-08-16", "2025-12-14"],
+  [88, 0, "N - 2305 - 30 TPH FURNACE", "DEFAULT", "Saurabh Jangra", "Checked In", "", "In Process", "2024-09-25", "2025-09-30", "2026-07-26", "2025-03-08"],
+  [141, 0, "N - 2426 - PICKLING LINE - 1650 MM", "DEFAULT", "Aditya Saini", "Checked In", "Pickling Line", "In Process", "2025-04-16", "2025-09-30", "2026-07-14", "2025-10-30"],
+  [189, 0, "N - 2543-SPARES FOR GALVANIZING LINE 750MM @ 90 MPM", "DEFAULT", "Anandhu Gopan", "Checked In", "", "In Process", "2025-10-08", "2026-01-31", "2026-07-14", "2026-01-14"],
+  [95, 0, "N - 2231 - 6HI COLD ROLLING MILL", "DEFAULT", "Saurabh Jangra", "Checked In", "6HI CRM", "In Process", "2024-10-24", "2025-07-31", "2026-07-14", "2025-06-19"],
+  [184, 0, "N - 2420 - UTILITY.", "DEFAULT", "Saurabh Jangra", "Checked In", "", "In Process", "2025-08-26", "2025-10-31", "2026-07-08", "2025-11-25"],
+  [120, 0, "N - 2424 - 6HI CRM1250 MM @ 1200 MPM", "DEFAULT", "Mayank Bandha", "Checked In", "6HI CRM", "In Process", "2025-01-09", "2025-09-30", "2026-07-03", "2025-01-31"],
+  [136, 0, "Design Schedule", "DEFAULT", "sachintb", "Checked In", "", "In Process", "2025-03-28", "2025-09-30", "2026-06-26", "2025-09-27"],
+  [188, 0, "N - 2523 BACK COAT HEAD FOR CC1350 MM @ 60 MPM", "DEFAULT", "sachintb", "Checked In", "", "In Process", "2025-09-08", "2025-12-30", "2026-05-04", "2026-02-19"],
+  [103, 0, "N - 2407 Pickling Line 750", "DEFAULT", "Sachin", "Checked In", "Pickling Line", "In Process", "2024-11-05", "2025-07-31", "2026-04-30", "2025-06-10"],
+  [142, 0, "PRACTICE PROJECT", "DEFAULT", "sachintb", "Checked In", "", "In Process", "2025-03-28", "2025-09-30", "2026-04-26", "2025-03-20"],
+  [81, 0, "N-2306 4HI Revamp", "DEFAULT", "Mayank Bandha", "Checked In", "6HI CRM", "In Process", "2024-09-18", "2025-02-28", "2026-04-07", "2024-12-14"],
+  [139, 0, "N-2415- UTTAM-TRIMMING 1500MM", "DEFAULT", "Aditya Saini", "Checked In", "Rewinding", "In Process", "2025-04-07", "2025-08-31", "2026-04-07", "2026-03-01"],
+  [193, 0, "N - 2536 -  PP PICKLING LINE REVAMP 1335 MM @ 130 MPM", "DEFAULT", "Anandhu Gopan", "Checked In", "Spares", "In Process", "2025-10-09", "2025-02-28", "2026-04-20", "2025-10-22"],
+  [195, 0, "N - 2544 - CR REWINDING LINE 750 MM @ 200 MPM", "DEFAULT", "Anandhu Gopan", "Checked In", "Rewinding", "In Process", "2025-10-09", "2025-03-31", "2026-04-20", "2025-10-22"],
+  [196, 0, "N - 2527 - FURNACE", "DEFAULT", "Saurabh Jangra", "Checked In", "CGL", "In Process", "2025-10-09", "2025-02-01", "2026-04-20", "2025-10-22"],
+  [200, 0, "N - 2516 - PUSH PULL PICKLING - 1650MM @ 180MPM", "DEFAULT", "Aditya Saini", "Checked In", "Pickling Line", "In Process", "2025-11-13", "2026-04-01", "2026-04-20", "2025-11-26"],
+  [52, 0, "N - 2207 - 6HI CRM 1500 MM @ 1200 MPM", "DEFAULT", "Aditya Sharma", "Checked In", "6HI CRM", "In Process", "2024-08-05", "2025-09-30", "2026-04-15", "2025-01-11"],
+  [114, 0, "N - 2416 - BURR MASHER ASSY", "DEFAULT", "Aditya Saini", "Checked In", "Spares", "In Process", "2024-12-19", "2025-02-28", "2026-04-07", "2025-03-29"],
+  [53, 0, "N - 2305 30 TPH Continuous Galvanizing Line 750 MM @90 MPM", "DEFAULT", "Saurabh Jangra", "Checked In", "CGL", "In Process", "2024-08-07", "2025-10-31", "2026-04-09", "2025-03-12"],
+  [92, 0, "N - 2305 - 30 TPH SKIN PASS MILL", "DEFAULT", "Aditya Sharma", "Checked In", "SPM", "In Process", "2024-10-03", "2025-03-31", "2026-04-07", "2025-06-11"],
+  [86, 0, "N - 2403 - 4HI COLD ROLLING MILL 650MM @ 500 MPM", "DEFAULT", "Mayank Bandha", "Checked In", "4HI CRM", "In Process", "2024-09-21", "2025-07-31", "2026-04-08", "2025-07-16"],
+  [100, 0, "N - 2419 - Recoiler Mandrel Assembly", "DEFAULT", "Aditya Saini", "Checked In", "", "In Process", "2024-11-05", "2025-01-01", "2026-04-08", "2024-12-26"],
+  [113, 0, "N - 2221 - 4HI CRM 400MM @300MPM REVAMP", "DEFAULT", "Mayank Bandha", "Checked In", "4HI CRM", "In Process", "2024-12-14", "2025-04-30", "2026-04-07", "2025-05-27"],
+  [108, 0, "Template Project Of 2405 Rewinding", "DEFAULT", "Durga", "Checked In", "Trimming Line", "Planned", "2024-11-13", "2024-12-31", "2025-07-12", "2025-06-13"],
+  [186, 0, "N - 2502 Pickling Line - 1300 MM", "DEFAULT", "Aditya Saini", "Checked In", "Pickling Line", "In Process", "2025-09-08", "2026-04-30", "2026-10-31", "2025-05-31"],
+  [126, 0, "SANJAY", "DEFAULT", "Sanjay Kumar C", "Checked In", "", "Planned", "2025-02-06", "2025-02-20", "2025-05-22", "2025-05-22"],
+  [199, 0, "N - 2212 CCL LINE 1250 MM @ 80 MPM LODHIA", "DEFAULT", "Saurabh Jangra", "Checked In", "CCL", "In Process", "2025-11-07", "2026-04-29", "2026-08-29", "2026-03-31"],
+  [201, 0, "exp", "DEFAULT", "Durga", "Checked In", "", "In Process", "2025-11-17", "2026-05-14", "2026-10-27", "2026-06-05"],
+  [33, 0, "2414-6HI CRM 1500MM", "DEFAULT", "Mayank Bandha", "Checked In", "6HI CRM", "On Hold", "2024-07-12", "2025-06-07", "2025-12-18", "2025-06-16"],
+  [131, 0, "N - 2422 - FURNACE EQUIP. - WET FLUX TO GL LINE CONVERSION 1050MM @ 120MPM", "DEFAULT", "Yogesh Bawliya", "Checked In", "CGL", "On Hold", "2025-03-14", "2025-10-31", "2026-01-20", "2025-09-14"],
+  [137, 0, "PENDING DRAWINGS", "DEFAULT", "sachintb", "Checked In", "", "Planned", "2025-04-04", "2025-04-30", "2025-05-07", "2025-04-17"],
+  [220, 0, "N - 2607- JSW BAWAL - RECOILER ASSEMBLY", "DEFAULT", "sachintb", "Checked In", "Spares", "In Process", "2026-03-17", "2026-08-17", "2026-10-21", "2026-09-30"],
+  [138, 0, "N - 2422 - TERMINAL EQUIP. - WET FLUX TO GL LINE CONVERSION 1050MM @ 120MPM", "DEFAULT", "Aditya Saini", "Checked In", "", "On Hold", "2025-04-06", "2025-11-30", "2026-01-27", "2025-12-08"],
+  [89, 0, "Copy Template", "DEFAULT", "Durga", "Checked In", "Trimming Line", "Planned", "2024-07-12", "2024-12-31", "2025-02-10", "2025-01-31"],
+  [112, 0, "Template Project Of 230G CGL", "DEFAULT", "Durga", "Checked In", "CGL", "Planned", "2024-08-07", "2025-03-31", "2025-05-13", "2025-03-28"],
+  [219, 0, "TEST PROJECT 3-3-26", "DEFAULT", "Sarthakhanda", "Checked In", "", "In Process", "2026-03-03", "2026-08-31", "2026-09-29", "2026-09-04"],
+  [156, 0, "N- 2516 - PICKLING LINE 1650 MM", "DEFAULT", "Shivendu Sharma", "Checked In", "Pickling Line", "Planned", "2025-12-31", "2026-06-30", "2026-07-14", "2026-07-14"],
+  [67, 1, "2221 -Transition", "DEFAULT", "Aditya Sharma", "Checked In", "Transition", "On Hold", "2024-07-16", "2024-10-27", "2024-10-28", "2024-11-04"],
+  [157, 1, "N - 2519 - CGL LINE TERMINAL EQP 1500 MM @ 220 MPM", "DEFAULT", "Tripurari Kumar", "Checked In", "CGL", "In Process", "2026-02-14", "2026-12-31", "2026-10-26", "2026-07-22"],
+  [151, 1, "N - 2509 - 6HI CRM1250 MM @ 1200 MPM", "DEFAULT", "Shivendu Sharma", "Checked In", "6HI CRM", "Planned", "2025-03-25", "2026-02-08", "2025-11-20", "2025-10-01"],
+  [55, 1, "Transitin Projects", "DEFAULT", "Gaurav Purohit", "Checked In", "", "Planned", "2024-07-16", "2024-08-31", "2024-08-23", "2024-07-31"],
+  [216, 1, "BMWIL -SPARES", "DEFAULT", "Mayank Bandha", "Checked In", "Spares", "In Process", "2026-02-05", "2027-02-04", "2026-10-07", "2026-08-21"],
+  [155, 1, "N - 2513 -CR SLITTING LINE1500 MM @ 150 MPM", "DEFAULT", "sachintb", "Checked In", "Slitting", "Planned", "2025-09-05", "2026-07-30", "2026-03-14", "2026-03-14"],
+  [158, 1, "N - 2520 - COLOUR COATING LINE 1500MM @ 150 MPM", "DEFAULT", "sachintb", "Checked In", "CCL", "Planned", "2026-01-01", "2026-12-31", "2026-07-22", "2026-07-22"],
+  [192, 1, "N - 2534 - REWINDING CUM TRIMMING - 1500MM@500MPM", "DEFAULT", "Anandhu Gopan", "Checked In", "TRIMMING", "In Process", "2025-10-09", "2026-04-30", "2026-04-20", "2025-10-22"],
+  [211, 2, "N - 2601 - BMWIL - 6 HI COLD ROLLING MILL 1250 MM @ 1200 MPM", "DEFAULT", "Mayank Bandha", "Checked In", "6HI CRM", "In Process", "2026-03-10", "2027-02-04", "2026-08-29", "2026-07-13"],
+  [150, 4, "N -2510 - PICKLING LINE-1650MM", "DEFAULT", "Shivendu Sharma", "Checked In", "Pickling Line", "Planned", "2025-05-12", "2026-03-31", "2025-07-24", "2025-07-23"],
+  [153, 5, "N - 2512 - TRIMMING LINE - 1500 MM", "DEFAULT", "Shivendu Sharma", "Checked In", "Trimming Line", "Planned", "2025-07-31", "2026-04-30", "2025-09-16", "2025-09-16"],
+  [198, 6, "N - 2537 - 5 STAND TANDEM MILL 1500 MM @ 800 MPM", "DEFAULT", "Mayank Bandha", "Checked In", "", "In Process", "2025-11-06", "2026-06-30", "2026-04-20", "2025-11-19"],
+  [154, 6, "N - 2512 - CR SLITTING LINE 1500 MM @150 MPM", "DEFAULT", "sachintb", "Checked In", "Slitting", "Planned", "2025-08-31", "2026-08-31", "2025-10-22", "2025-10-22"],
+  [202, 18, "N - 2548 - TWIN STAND COLD ROLLING MILL 750 MM", "DEFAULT", "Mayank Bandha", "Checked In", "", "In Process", "2025-12-02", "2026-12-02", "2026-04-20", "2025-12-15"],
+  [47, 0, "N - 2401 - TRIMMER -1350 MM @ 500 MPM", "DEFAULT", "Aditya Saini", "Checked In", "Trimming Line", "Completed", "2024-08-03", "2024-12-31", "2025-04-01", "2025-02-22"],
+  [48, 0, "N - 2302 Pickling Line 1250MM @80 MPM", "DEFAULT", "Sachin", "Checked In", "Pickling Line", "Completed", "2024-08-26", "2025-02-28", "2025-03-17", "2024-11-12"],
+  [50, 0, "N - 2301 - 6HI CRM1250 MM @ 1100 MPM", "DEFAULT", "Mayank Bandha", "Checked In", "6HI CRM", "Completed", "2024-08-07", "2025-05-31", "2025-07-23", "2024-12-02"],
+  [51, 0, "N -  2310 4HI CRM 800 MM @ 600 MPM", "DEFAULT", "Mayank Bandha", "Checked In", "6HI CRM", "Completed", "2024-08-01", "2025-02-28", "2025-04-17", "2024-12-09"],
+  [57, 0, "2212 -Transition", "DEFAULT", "Saurabh Jangra", "Checked In", "Transition", "Completed", "2024-07-16", "2024-08-25", "2024-11-20", "2024-09-02"],
+  [58, 0, "2223-Transition", "DEFAULT", "Gaurav Purohit", "Checked In", "Transition", "Completed", "2024-07-16", "2024-07-20", "2024-08-12", "2024-07-19"],
+  [59, 0, "2122-Transition", "DEFAULT", "Gaurav Purohit", "Checked In", "Transition", "Completed", "2024-07-16", "2024-07-28", "2024-08-21", "2024-07-29"],
+  [60, 0, "2209-Transition", "DEFAULT", "Gaurav Purohit", "Checked In", "Transition", "Completed", "2024-07-17", "2024-07-20", "2024-08-12", "2024-07-19"],
+  [61, 0, "2238-Transition", "DEFAULT", "Sugreev Yadav", "Checked In", "Transition", "Completed", "2024-07-16", "2024-07-30", "2024-11-20", "2024-07-31"],
+  [62, 0, "2012-Transition", "DEFAULT", "Aditya Saini", "Checked In", "Transition", "Completed", "2024-07-16", "2024-08-03", "2024-11-23", "2024-08-04"],
+  [63, 0, "2234-Transition", "DEFAULT", "Sugreev Yadav", "Checked In", "Transition", "Completed", "2024-07-16", "2024-07-25", "2024-11-20", "2024-07-25"],
+  [64, 0, "2233-Transition", "DEFAULT", "Sachin", "Checked In", "Transition", "Completed", "2024-07-16", "2024-09-30", "2024-12-06", "2024-10-07"],
+  [65, 0, "2213-Transition", "DEFAULT", "Sachin", "Checked In", "Transition", "Completed", "2024-07-16", "2024-09-20", "2024-11-23", "2024-09-26"],
+  [66, 0, "2219 -Transition", "DEFAULT", "Mayank Bandha", "Checked In", "Transition", "Completed", "2024-07-16", "2024-08-10", "2024-10-25", "2024-08-12"],
+  [68, 0, "2218 -Transition", "DEFAULT", "Mayank Bandha", "Checked In", "Transition", "Completed", "2024-07-16", "2024-08-17", "2024-11-22", "2024-08-20"],
+  [69, 0, "2217 -Transition", "DEFAULT", "Saurabh Jangra", "Checked In", "Transition", "Completed", "2024-07-16", "2024-09-05", "2024-11-22", "2024-09-19"],
+  [70, 0, "2114  -Transition", "DEFAULT", "Aditya Saini", "Checked In", "Transition", "Completed", "2024-07-16", "2024-09-10", "2024-10-25", "2024-09-13"],
+  [71, 0, "2119  -Transition", "DEFAULT", "Aditya Saini", "Checked In", "Transition", "Completed", "2024-07-04", "2024-10-10", "2024-11-20", "2024-09-02"],
+  [72, 0, "N-2304-1500 LPH ACID REGENERATION PLANT", "DEFAULT", "Sachin", "Checked In", "6HI CRM", "Completed", "2024-08-09", "2025-05-31", "2025-07-23", "2024-12-26"],
+  [74, 0, "2214-Transition", "DEFAULT", "Lokesh Chaudhary", "Checked In", "Transition", "Completed", "2024-07-16", "2024-08-03", "2024-08-26", "2024-08-04"],
+  [78, 0, "N - 2402 - CR REWINDING -800 MM @ 200 MPM", "DEFAULT", "Aditya Saini", "Checked In", "Trimming Line", "In Process", "2024-09-04", "2025-05-31", "2026-04-07", "2025-04-24"],
+  [87, 0, "N - 2307 - Clarios Spare Work Roll Assy", "DEFAULT", "Mayank Bandha", "Checked In", "Spares", "Completed", "2024-09-24", "2024-10-10", "2025-02-07", "2024-10-24"],
+  [93, 0, "N - 2410 - Furnace", "DEFAULT", "Lokesh Chaudhary", "Checked In", "", "Completed", "2024-07-01", "2025-02-28", "2025-02-07", "2025-03-10"],
+  [99, 0, "N - 2011 - APL Apollo Revamp", "DEFAULT", "Aditya Saini", "Checked In", "", "Completed", "2024-11-05", "2025-01-01", "2025-02-04", "2025-02-14"],
+  [105, 0, "N - 2239- TRIMMER -1650MM", "DEFAULT", "Aditya Saini", "Checked In", "", "In Process", "2024-12-04", "2025-06-30", "2026-04-07", "2025-06-03"],
+  [170, 0, "shriyans test project", "DEFAULT", "sachintb", "Checked Out", "", "Planned", "2025-06-13", "2025-09-13", "", ""],
+  [210, 0, "N - 2532 - BMWIL - SLITTING 2000MM@150MPM", "DEFAULT", "Om Dev", "Checked In", "Slitting", "In Process", "2026-03-12", "2027-02-04", "", ""],
+  [212, 0, "N - 2602 - BMWIL - HR SLITTING LINE, 2000MM@150MPM", "DEFAULT", "Om Dev", "Checked In", "Slitting", "In Process", "2026-03-12", "2027-02-04", "", ""],
+  [213, 0, "N - 2603 - BMWIL - REWINDING CUM TRIMMING - 1500MM@500MPM", "DEFAULT", "Kunal Dagar", "Checked In", "Rewinding", "In Process", "2026-03-12", "2027-02-04", "", ""]
+];
 
 function trimOrBlank(v){ return (v==null?'':String(v)).trim(); }
 function splitLabels(v){ return (Array.isArray(v)?v:[trimOrBlank(v)]).join(',').split(',').map(s=>s.trim()).filter(Boolean); }
@@ -624,27 +739,6 @@ function normalizeProject(project, seedOrder=0){
   normalized.checkoutDraft = planStatus==='Checked Out' ? normalizeCheckoutDraft(project.checkoutDraft, normalized) : null;
   return normalized;
 }
-// ============================================================
-// DATABASE CONFIGURATION (SUPABASE)
-// ============================================================
-const SUPABASE_CONFIG = {
-  url: 'YOUR_SUPABASE_URL', // Replace with your Supabase project URL
-  key: 'YOUR_SUPABASE_ANON_KEY', // Replace with your Supabase anon key
-  table: 'projects' // Recommended table name
-};
-
-let supabase = null;
-if (SUPABASE_CONFIG.url !== 'YOUR_SUPABASE_URL' && SUPABASE_CONFIG.key !== 'YOUR_SUPABASE_ANON_KEY') {
-  try {
-    supabase = window.supabase.createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.key);
-  } catch (err) {
-    console.warn("Supabase init failed:", err);
-  }
-}
-
-// ============================================================
-// DATA FUNCTIONS
-// ============================================================
 function buildProjectSeed(){
   return PROJECT_SEED_ROWS.map((row, idx)=>normalizeProject({
     id: row[0],
@@ -664,62 +758,38 @@ function buildProjectSeed(){
     components: {}
   }, idx));
 }
-
-async function loadDataFromSource() {
+function isLegacyDemoOnly(list){ return Array.isArray(list) && list.length===1 && list[0]?.code==='2601-BMWIL-CGL'; }
+function mergeProjects(seed, saved){
+  const map = new Map();
+  seed.forEach(p=>map.set(String(p.id), p));
+  saved.forEach((project, idx)=>{
+    const key = String(project?.id ?? `saved-${idx}`);
+    const base = map.get(key) || {};
+    map.set(key, normalizeProject({
+      ...base,
+      ...project,
+      categories: Array.isArray(project?.categories) ? project.categories : (base.categories || []),
+      components: project?.components || base.components || {},
+      phases: Array.isArray(project?.phases) && project.phases.length ? project.phases : (base.phases || [...DEFAULT_PHASES])
+    }, base.seedOrder ?? seed.length + idx));
+  });
+  return Array.from(map.values()).sort((a,b)=>(a.seedOrder??999999)-(b.seedOrder??999999)||String(a.projectNumber).localeCompare(String(b.projectNumber),undefined,{numeric:true}));
+}
+function loadData(){
   const seed = buildProjectSeed();
-  
-  // 1. Try Supabase
-  if (supabase) {
-    try {
-      const { data, error } = await supabase.from(SUPABASE_CONFIG.table).select('*').order('seedOrder', { ascending: true });
-      if (!error && data && data.length > 0) {
-        console.log("Loaded data from Supabase", data.length);
-        return data; // Assumes data is already in correct format or needs normalization
-      }
-      if (error) console.error("Supabase load error:", error);
-    } catch (err) {
-      console.error("Supabase load exception:", err);
-    }
-  }
-
-  // 2. Fallback to LocalStorage
   const raw = localStorage.getItem(STORAGE_KEY);
-  if (!raw) return seed;
-  try {
+  if(!raw) return seed;
+  try{
     const saved = JSON.parse(raw);
-    if (!Array.isArray(saved) || isLegacyDemoOnly(saved)) return seed;
+    if(!Array.isArray(saved) || isLegacyDemoOnly(saved)) return seed;
     return mergeProjects(seed, saved);
-  } catch (_) {
+  }catch(_){
     return seed;
   }
 }
+function saveData(){ localStorage.setItem(STORAGE_KEY,JSON.stringify(APP)); }
 
-async function saveData() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(APP));
-  
-  if (supabase) {
-    try {
-      // Upsert: matching by 'id'
-      const { error } = await supabase.from(SUPABASE_CONFIG.table).upsert(APP, { onConflict: 'id' });
-      if (error) {
-        console.error("Supabase save error:", error);
-        Swal.fire({toast:true, icon:'warning', title:'DB Sync failed', position:'top-end', timer:3000, showConfirmButton:false});
-      } else {
-        console.log("Data synced to Supabase");
-      }
-    } catch (err) {
-      console.error("Supabase sync exception:", err);
-    }
-  }
-}
-
-let APP = [];
-
-// Initialize APP asynchronously
-(async () => {
-  APP = await loadDataFromSource();
-  if (typeof renderDashboard === 'function') renderDashboard();
-})();
+let APP = loadData();
 
 function genDemo(){
   const p = (offset)=>{ const d=new Date(); d.setDate(d.getDate()+offset); return d.toISOString().split('T')[0]; };
@@ -2303,7 +2373,7 @@ function exportDashPDF(){
   const doc=new jsPDF('landscape');
   doc.setFillColor(42,80,113); doc.rect(0,0,297,20,'F');
   doc.setTextColor(255,255,255); doc.setFontSize(14);
-  doc.text('YD Assem Flow',14,13);
+  doc.text('YOGIJI DIGI — Project Realization Dashboard',14,13);
   doc.autoTable({head:[['Code','Client','Site','PM','Due Date','Progress','PO Value']],body:APP.map(p=>[p.code,p.client,p.site||'',p.pm||'',p.dueDate,p.progress+'%','₹'+(p.poValue/100000).toFixed(1)+'L']),startY:25,headStyles:{fillColor:[42,80,113]}});
   doc.save('YD_Projects_Dashboard.pdf');
 }
@@ -2342,17 +2412,7 @@ function exportDashPDF(){
 // ============================================================
 // INIT
 // ============================================================
-document.addEventListener('DOMContentLoaded',()=>{ 
-  if (SUPABASE_CONFIG.url === 'YOUR_SUPABASE_URL') {
-    Swal.fire({
-      icon: 'info',
-      title: 'Database Not Connected',
-      text: 'Please configure your Supabase URL and Key in index.html to enable cloud synchronization.',
-      confirmButtonText: 'Understood'
-    });
-  }
-  renderDashboard(); 
-});
+document.addEventListener('DOMContentLoaded',()=>{ renderDashboard(); });
 </script>
 </body>
 </html>
